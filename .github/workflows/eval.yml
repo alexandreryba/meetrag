@@ -1,0 +1,38 @@
+name: End-to-end evaluation
+
+# Manual only: every run calls the LLM provider and costs money.
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Number of questions (empty = full golden set)"
+        required: false
+      fast_model:
+        description: "Model for router / graders / SQL / verifier"
+        required: false
+        default: "claude-opus-5-5"
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      POLYRAG_LLM_FAST_MODEL: ${{ inputs.fast_model }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - run: uv run polyrag ingest
+      - run: uv run polyrag eval e2e ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }}
+      - run: cat reports/e2e.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: reports/e2e.*
