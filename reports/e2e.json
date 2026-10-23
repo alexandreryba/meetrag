@@ -1,0 +1,1272 @@
+{
+  "created_at": "2026-10-23T14:35:08+00:00",
+  "models": {
+    "provider": "claude-code",
+    "synthesis": "claude-opus-5-5",
+    "agents": "claude-opus-5-5",
+    "judge": "claude-opus-5-5"
+  },
+  "notes": [
+    "Run through the Claude Code CLI on a Claude subscription: latency includes the CLI start-up of every call, and costs are the API-equivalent prices reported by the CLI (the subscription is what was billed)."
+  ],
+  "questions": 46,
+  "summary": {
+    "questions": 46.0,
+    "errors": 0.0,
+    "answer_accuracy": 0.9634146341463414,
+    "strict_accuracy": 0.926829268292683,
+    "faithfulness": 0.9916851441241684,
+    "routing_precision": 0.975609756097561,
+    "routing_recall": 1.0,
+    "abstention_accuracy": 1.0,
+    "false_abstention_rate": 0.0,
+    "latency_p50_s": 21.1111,
+    "latency_p95_s": 26.9697,
+    "cost_per_question_usd": 0.05425990000000001,
+    "llm_calls_per_question": 4.043478260869565
+  },
+  "by_category": {
+    "analytics": {
+      "questions": 8.0,
+      "errors": 0.0,
+      "answer_accuracy": 0.9375,
+      "strict_accuracy": 0.875,
+      "faithfulness": 0.96875,
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "abstention_accuracy": 0.0,
+      "false_abstention_rate": 0.0,
+      "latency_p50_s": 24.1823,
+      "latency_p95_s": 26.65138,
+      "cost_per_question_usd": 0.0587502,
+      "llm_calls_per_question": 4.0
+    },
+    "multi_source": {
+      "questions": 6.0,
+      "errors": 0.0,
+      "answer_accuracy": 0.8333333333333334,
+      "strict_accuracy": 0.6666666666666666,
+      "faithfulness": 1.0,
+      "routing_precision": 0.9166666666666666,
+      "routing_recall": 1.0,
+      "abstention_accuracy": 0.0,
+      "false_abstention_rate": 0.0,
+      "latency_p50_s": 23.408299999999997,
+      "latency_p95_s": 36.283024999999995,
+      "cost_per_question_usd": 0.09523834999999999,
+      "llm_calls_per_question": 5.333333333333333
+    },
+    "out_of_scope": {
+      "questions": 5.0,
+      "errors": 0.0,
+      "answer_accuracy": 0.0,
+      "strict_accuracy": 0.0,
+      "faithfulness": 0.0,
+      "routing_precision": 0.0,
+      "routing_recall": 0.0,
+      "abstention_accuracy": 1.0,
+      "false_abstention_rate": 0.0,
+      "latency_p50_s": 8.4039,
+      "latency_p95_s": 23.20374,
+      "cost_per_question_usd": 0.025226540000000002,
+      "llm_calls_per_question": 2.2
+    },
+    "policies": {
+      "questions": 10.0,
+      "errors": 0.0,
+      "answer_accuracy": 1.0,
+      "strict_accuracy": 1.0,
+      "faithfulness": 0.9909090909090909,
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "abstention_accuracy": 0.0,
+      "false_abstention_rate": 0.0,
+      "latency_p50_s": 20.01425,
+      "latency_p95_s": 23.102545,
+      "cost_per_question_usd": 0.046402860000000004,
+      "llm_calls_per_question": 4.0
+    },
+    "products": {
+      "questions": 9.0,
+      "errors": 0.0,
+      "answer_accuracy": 1.0,
+      "strict_accuracy": 1.0,
+      "faithfulness": 1.0,
+      "routing_precision": 0.9444444444444444,
+      "routing_recall": 1.0,
+      "abstention_accuracy": 0.0,
+      "false_abstention_rate": 0.0,
+      "latency_p50_s": 20.3854,
+      "latency_p95_s": 26.965320000000002,
+      "cost_per_question_usd": 0.053507177777777776,
+      "llm_calls_per_question": 4.333333333333333
+    },
+    "support": {
+      "questions": 8.0,
+      "errors": 0.0,
+      "answer_accuracy": 1.0,
+      "strict_accuracy": 1.0,
+      "faithfulness": 1.0,
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "abstention_accuracy": 0.0,
+      "false_abstention_rate": 0.0,
+      "latency_p50_s": 21.4472,
+      "latency_p95_s": 23.57082,
+      "cost_per_question_usd": 0.047849725,
+      "llm_calls_per_question": 4.0
+    }
+  },
+  "items": [
+    {
+      "id": "pol-01",
+      "category": "policies",
+      "question": "How many days per week can an employee work remotely at Voltaria?",
+      "answer": "Eligible employees can work remotely **up to 3 days per week** [1].\n\nKey conditions:\n- **Eligibility:** You qualify once you have completed your probation period, which is three months for most roles [2].\n- **Excluded roles:** Roles that require physical presence are not eligible, such as field technicians and the Lyon control-room operators [2].\n- **Interns and apprentices:** They may work remotely one day per week, with their tutor's agreement [2].\n- **Anchor day:** Each team sets one anchor day per week when everyone is on site [1].\n- **Core hours:** Collaboration hours are **10:00 to 16:00 (Paris time)**, and meetings should be scheduled within this window [1].\n- **Declaration:** Declare your remote days in PeopleHub by Friday for the following week [1].\n- **No carry-over:** Unused remote days cannot be carried over to the next week [1].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer says up to 3 days per week, available after probation, with one on-site anchor day per team. That covers every key fact in the reference, and none of the extra details contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 21827.7,
+      "cost_usd": 0.048239199999999996,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-02",
+      "category": "policies",
+      "question": "What is the monthly home-office allowance and who is entitled to it?",
+      "answer": "The monthly home-office allowance is **€45 per month**, paid with the monthly salary [1].\n\n**Who is entitled:**\n- Employees working remotely **at least two days per week** [1].\n- The Remote Work Policy applies to all Voltaria Energy employees on **permanent and fixed-term contracts in France** [2].\n\n**Related details:**\n- Eligible employees may work remotely up to **3 days per week** [3].\n- Remote days are declared in PeopleHub by Friday for the following week [3].\n- Separately, an ergonomic chair can be reimbursed up to **€250 once every five years** with an invoice submitted through Expensio [1].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer includes every key fact: €45 per month, paid with the salary, for employees who work remotely at least two days a week. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 24145.6,
+      "cost_usd": 0.0555307,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-03",
+      "category": "policies",
+      "question": "Can I work remotely from Canada for two weeks?",
+      "answer": "**No, working remotely from Canada is not allowed.** Remote work from abroad is only permitted from EU/EEA countries or Switzerland. Working from outside those countries is not allowed \"for tax, employment-law and data-security reasons\" [1].\n\nFor reference, the rules for working from another country are:\n- It must be within the EU/EEA or Switzerland [1].\n- The limit is **20 working days per calendar year** [1].\n- Your manager and HR must approve the request in PeopleHub at least 10 business days in advance [1].\n\nThis policy applies to all Voltaria Energy employees on permanent and fixed-term contracts in France (Version 3.2, effective 1 January 2026) [2].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer says no and gives the reason: working from abroad is only allowed from the EU/EEA or Switzerland. It also includes the reference's 20-working-day yearly limit and the 10-business-day advance approval, and nothing in it contradicts the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 20902.4,
+      "cost_usd": 0.0470518,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-04",
+      "category": "policies",
+      "question": "How long is the paid parental leave for the second parent?",
+      "answer": "The second parent gets **6 weeks of leave at full salary**, which must be taken within the first six months after the birth or adoption [1].\n\n- After returning from leave, parents may work part-time (80%) for up to six months with a 90% salary [1].\n- This policy applies to employees of Voltaria Energy SAS in France and is effective from 1 January 2026 [2].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer states 6 weeks at full salary, to be taken within the first six months after birth or adoption. That matches the reference, and the extra details don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 20325.1,
+      "cost_usd": 0.0434461,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-05",
+      "category": "policies",
+      "question": "How many unused paid leave days can I carry over to next year, and until when can I use them?",
+      "answer": "You can carry over up to **5 days** of unused paid leave to the following year, and you must use them **before 31 March** [1].\n\n- **Deadline:** Carried-over days not used by 31 March are lost [1].\n- **Exception:** You keep them if you couldn't take them because of sick leave or parental leave [1].\n- **RTT days:** If you're on the \"forfait jours\" arrangement, your **10 RTT days** cannot be carried over [2].\n\nThis policy applies to employees of Voltaria Energy SAS in France and took effect on 1 January 2026 [3].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives both key facts from the reference: up to 5 days can be carried over, and they must be used before 31 March. The extra details it adds don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 19703.4,
+      "cost_usd": 0.04612089999999999,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-06",
+      "category": "policies",
+      "question": "What is the maximum hotel rate per night for a business trip to Paris?",
+      "answer": "The maximum hotel rate for a business trip to Paris is **€180 per night, breakfast included** [1].\n\n- The same cap applies to London, while other cities are capped at €130 [1].\n- Exceptions, such as trade fairs or events, must be pre-approved by your manager in Navette [1].\n- This policy is owned by Finance, applies to all employees travelling on behalf of Voltaria Energy, and has been effective since 1 March 2026 [2].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives €180 per night with breakfast included, which matches the reference. The other details it adds don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 18379.7,
+      "cost_usd": 0.0430163,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-07",
+      "category": "policies",
+      "question": "Above which amount does an expense report need approval from a finance controller?",
+      "answer": "Expense reports above **€2,000** require approval from a finance controller, in addition to manager approval [1].\n\n- Above **€500**: manager approval is required [1].\n- Above **€2,000**: finance controller approval is also required [1].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives the €2,000 threshold for finance controller approval and also mentions manager approval above €500, which matches the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 18669.5,
+      "cost_usd": 0.03995699999999999,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-08",
+      "category": "policies",
+      "question": "Can I use a public generative AI chatbot to summarise a confidential supplier contract?",
+      "answer": "**No.** A supplier contract is Confidential information, and public generative-AI tools may only be used with **Public** information.\n\n- Contracts are classified as **Confidential**, which covers \"sensitive business information (contracts, pricing strategy, roadmaps)\" [2].\n- Public generative-AI tools may only be used with **Public** information [1].\n- Confidential information may only be processed in the approved **Voltaria AI Workspace** [1]. It keeps data within the EU and does not use it for model training [1].\n\nTo summarise the contract with AI, use the Voltaria AI Workspace instead of a public chatbot [1].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer says no and gives both key facts: public generative-AI tools may only be used with Public information, and Confidential information may only be processed in the Voltaria AI Workspace. It contradicts nothing in the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 19547.4,
+      "cost_usd": 0.047891,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-09",
+      "category": "policies",
+      "question": "How quickly must a suspected phishing incident be reported, and to whom?",
+      "answer": "A suspected phishing incident must be reported to the **Security Operations Centre within 1 hour** [1].\n\nYou can report it in either of two ways [1]:\n- **Email:** security@voltaria.example\n- **Phone:** internal extension **4444**, available 24/7",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer has every key fact in the reference: report within 1 hour, to the Security Operations Centre, by email at security@voltaria.example or by internal extension 4444, which is staffed 24/7.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 18106.5,
+      "cost_usd": 0.0397381,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pol-10",
+      "category": "policies",
+      "question": "A supplier offered me a bottle of wine worth EUR 120. What should I do?",
+      "answer": "Because the wine is worth **€120, above the €75 threshold**, you cannot simply accept it; you must declare it and get approval [1].\n\n**What to do:**\n- **Check for an ongoing tender:** If this supplier is taking part in an **ongoing tender**, you may not accept the gift at all [1].\n- **Declare it:** Record the gift in the **ethics register within 5 business days** [1].\n- **Get approval:** Your manager must approve it [1].\n- **If it is not approved:** Return the gift or donate it to charity [1].\n\n**Also keep in mind:**\n- The €75 limit applies **per giver and per calendar year**, so other gifts from this supplier this year also count toward it [1].\n- No employee may accept an advantage intended to influence a business decision [3].\n- This policy is owned by Compliance and applies to all employees [2].",
+      "expected_sources": [
+        "policies"
+      ],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer includes every key fact: it's over the €75 threshold, it must be declared in the ethics register within 5 business days, the manager must approve it, and otherwise it gets returned or donated. It also says the gift can't be accepted if the supplier is in an ongoing tender. The extra details don't contradict the reference.",
+      "faithfulness": 0.9090909090909091,
+      "unsupported_claims": [
+        "The wine is worth €120."
+      ],
+      "grounded": true,
+      "latency_ms": 21104.9,
+      "cost_usd": 0.0530375,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-01",
+      "category": "products",
+      "question": "What is the price per kWh of Voltaria Verte and where does its electricity come from?",
+      "answer": "**Voltaria Verte costs €0.2050 per kWh**, plus a monthly fee of €12.90, with no commitment [3]. Its price is indexed on the regulated tariff, plus 3% [3].\n\n**Origin of the electricity:** Voltaria Verte supplies **100% renewable electricity** [2]. For every kWh consumed, Voltaria cancels a **guarantee of origin** issued by a French renewable plant [1]. The 2026 supply mix is:\n- **70% hydropower** from Alpine run-of-river plants [1]\n- **30% wind power** from onshore wind farms in Occitanie and Hauts-de-France [1]\n\nGuarantees of origin are tracked in the national registry, and the yearly certificate is available in the Voltaria app [1].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives every key fact: €0.2050/kWh, the €12.90 monthly fee, 100% renewable backed by guarantees of origin, and the 70% hydro / 30% wind split from French plants. The extra details don't contradict the reference. It leaves out 'incl. taxes', which is minor.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 22368.3,
+      "cost_usd": 0.055577800000000004,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-02",
+      "category": "products",
+      "question": "What are the off-peak hours of Voltaria Drive and the off-peak price?",
+      "answer": "Voltaria Drive's off-peak hours run **every day from 23:00 to 07:00**, at **€0.1350 per kWh** [1][2].\n\n- Peak hours (all other hours): **€0.2290 per kWh** [1][2]\n- Monthly fee: **€14.50** for a 6 kVA meter [1]\n- A smart meter is required, since consumption must be measured by time slot [1]",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives the same off-peak hours (23:00–07:00 every day), off-peak price (€0.1350/kWh) and peak price (€0.2290/kWh) as the reference. The extra details don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 20385.4,
+      "cost_usd": 0.0514859,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-03",
+      "category": "products",
+      "question": "How much does the wallbox pack cost a Voltaria Drive customer once the credit is applied?",
+      "answer": "With the credit applied, the wallbox pack costs a Voltaria Drive customer a net **€890** [1].\n\n- **Price:** the 7.4 kW wallbox, installed by a certified partner, costs **€1,190**, installation included [1].\n- **Credit:** Voltaria Drive customers receive an **installation credit of €300** [1]. It is applied to their electricity bill [1].\n- **Timing:** installation is scheduled within three weeks of the order [1].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gets all the key facts right: the wallbox costs €1,190 installed, there is a €300 credit, and the net cost is €890. The extra details about the bill and timing don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 20838.6,
+      "cost_usd": 0.045747899999999994,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-04",
+      "category": "products",
+      "question": "Are there termination fees if I leave Voltaria Fixe 3 ans before the end of the three years?",
+      "answer": "No, there are no termination fees. Voltaria Fixe 3 ans has **no commitment and no termination fee** [2].\n\n- You can switch supplier or offer at any time, even during the 36-month guarantee period [2].\n- If you switch to another Voltaria offer, the price guarantee ends [2].\n- Two months before the 36 months are up, you'll receive an email with the new Fixe 3 ans price. If you do nothing, the contract renews for another 36 months at that price. You can instead choose any other Voltaria offer at no cost [1].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer says there is no commitment and no termination fee, and that switching ends the price guarantee. Those are all the key facts in the reference, and nothing contradicts it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 19227.5,
+      "cost_usd": 0.045176299999999996,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-05",
+      "category": "products",
+      "question": "What happens at the end of the 36-month period of Voltaria Fixe 3 ans?",
+      "answer": "At the end of the 36-month period, the contract is automatically renewed for a new 36-month period at the new Fixe 3 ans price unless the customer chooses otherwise [1].\n\n- **Advance notice:** two months before the end of the 36-month period, the customer receives an email with the new Fixe 3 ans price [1].\n- **No action:** the contract is renewed for a new 36-month period at that price [1].\n- **Alternative:** the customer can instead choose any other Voltaria offer at no cost [1].\n\nThere is also **no commitment and no termination fee**, so the customer can switch supplier or offer at any time, even during the guarantee period [2]. Switching to another Voltaria offer ends the price guarantee [2].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer includes every key fact: the email with the new price two months before the end, automatic renewal for 36 months at that price if the customer does nothing, and the option to pick another offer at no cost. The extra details about there being no commitment or termination fee don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 19623.8,
+      "cost_usd": 0.0483461,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-06",
+      "category": "products",
+      "question": "How much electricity does the Solar 6 pack produce per year, and at what price is the surplus bought back?",
+      "answer": "The Solar 6 pack (6 kWp) produces **about 7,500 kWh per year** in the Lyon area [2]. Voltaria buys back the surplus at **€0.04 per kWh** [1].\n\n- **Production basis:** about 1,250 kWh per kWp per year in the Lyon area. Actual output varies with roof orientation and region [2].\n- **Buyback terms:** electricity you don't use yourself is bought back under a **20-year buyback contract** [1].\n- **Pack price:** €12,900 including installation [2].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives all the key facts in the reference: about 7,500 kWh per year in the Lyon area, a buyback price of €0.04/kWh and a 20-year contract. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 17699.3,
+      "cost_usd": 0.0457349,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-07",
+      "category": "products",
+      "question": "Which offer is designed for professionals and what is its commitment period?",
+      "answer": "**Voltaria Pro Flex** is the offer for small businesses and professionals [1], and it comes with a **12-month** commitment [2].\n\nOther details:\n- Code: PROFLEX; segment: Professional [2]\n- Pricing: indexed on the wholesale market, €0.1890 per kWh [2]\n- Monthly fee: €29.00 [2]\n\nIt is the only offer with a commitment period. All residential offers have none [2].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives every key fact in the reference: the offer is Voltaria Pro Flex, it is indexed on the wholesale market at €0.1890/kWh, it has a €29.00 monthly fee, and it has a 12-month commitment. Its extra details do not conflict with the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 18458.8,
+      "cost_usd": 0.050872499999999994,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "pro-08",
+      "category": "products",
+      "question": "Is a smart meter required to subscribe to Voltaria Essentielle?",
+      "answer": "**No.** A smart meter is required only for time-of-use offers such as **Voltaria Drive**, because off-peak and peak consumption must be measured separately [1]. Voltaria Essentielle is described as the lowest-price offer, with a price that follows the regulated tariff, not as a time-of-use offer [2].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer says no and explains that a smart meter is only needed for time-of-use offers such as Voltaria Drive, which matches the reference. The extra details about Essentielle don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 26977.0,
+      "cost_usd": 0.0630082,
+      "llm_calls": 5,
+      "error": null
+    },
+    {
+      "id": "pro-09",
+      "category": "products",
+      "question": "When can a customer submit a self-reading of their meter?",
+      "answer": "Customers can submit a self-reading in the Voltaria app **between the 1st and the 5th of each month** [1]. Self-readings are used when the DNO reading is missing [1].\n\n- With a smart meter, the DNO normally transmits readings **daily** [2].\n- If no reading is available because of a communication failure, the bill is **estimated** and automatically corrected on the next actual reading [2].\n- When moving house, customers can also enter a **meter reading on the moving day** in the app to close the account at the old address. Alternatively, the DNO reads it remotely [3].",
+      "expected_sources": [
+        "products"
+      ],
+      "routed_sources": [
+        "products",
+        "support"
+      ],
+      "routing_precision": 0.5,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives both key facts from the reference: self-readings go through the Voltaria app, between the 1st and the 5th of each month. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 26947.8,
+      "cost_usd": 0.075615,
+      "llm_calls": 6,
+      "error": null
+    },
+    {
+      "id": "sup-01",
+      "category": "support",
+      "question": "Up to which amount can a Tier 1 agent handle a billing dispute, and what happens above it?",
+      "answer": "A Tier 1 agent can handle billing disputes **up to €200** [1].\n\n**Disputes above €200** must be escalated to the **Billing Expertise team (Tier 2) within 24 hours**, with the analysis already done [1].\n\nOther rules that apply to every dispute:\n- **Acknowledge** it within **1 business day**, through the customer's preferred channel [1].\n- For disputes up to €200, Tier 1 checks the meter readings, the offer and price applied, and recent payments [1].\n- The **resolution target is 10 business days** from the date the dispute is received [1].\n\nIf the dispute needs to go further, the next escalation level after Tier 2 is the **Customer Care manager** on duty [3].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gets both key facts right: Tier 1 handles disputes up to €200, and anything above that is escalated to the Billing Expertise team (Tier 2) within 24 hours. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 20555.7,
+      "cost_usd": 0.0524459,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-02",
+      "category": "support",
+      "question": "What is the maximum goodwill gesture a Tier 2 team lead can grant?",
+      "answer": "A Tier 2 team lead can grant a goodwill gesture of up to **€250** [1]. Anything above €250 requires a Billing manager [1].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives the correct maximum of EUR 250 and correctly says that anything above that goes to the billing manager. It leaves out the Tier 1 limit of EUR 50, but that is extra context and not the main fact the question asks for.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 21461.3,
+      "cost_usd": 0.0411167,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-03",
+      "category": "support",
+      "question": "What must an agent do when a medically dependent customer reports a power outage?",
+      "answer": "An outage affecting a medically dependent customer (flagged **MDC** in the CRM) is treated as a **P1 ticket** and must be escalated immediately [1].\n\n**MDC-specific actions:**\n- Classify the ticket as **P1** (critical) [1][2].\n- **Call the customer back within 30 minutes** [1]. This matches the P1 first-response target of **30 minutes** [2].\n- **Escalate immediately** to the DNO priority line and **inform the shift supervisor** [1].\n- Aim to resolve within the P1 target of **4 hours**, measured from ticket creation [2].\n\n**Standard outage steps that also apply:**\n1. Check the DNO outage map for the customer's address [3].\n2. If an outage is ongoing, give the customer the estimated restoration time and the **DNO emergency number**, available 24/7 [3].\n3. Open a ticket with the category **outage**, linked to the customer account [3].\n4. If there is a risk to people (fallen line, burning smell from the meter), tell the customer to stay away and call the emergency services first [3].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer includes every key fact from the reference: P1 classification, a callback within 30 minutes, immediate escalation to the DNO priority line, and informing the shift supervisor. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 21433.1,
+      "cost_usd": 0.0555576,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-04",
+      "category": "support",
+      "question": "Who pays compensation for a long power outage, and after how many hours?",
+      "answer": "The **distribution network operator (DNO)** pays the compensation, for outages lasting **more than 5 hours** due to the network [1].\n\n- Voltaria Energy is an electricity supplier and does not operate the grid; outages are handled by the DNO [2].\n- The compensation is a flat-rate amount [1].\n- Voltaria forwards the claim on the customer's behalf, and the compensation appears on a later bill [1].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer covers every key fact: the DNO pays a flat-rate compensation for outages longer than 5 hours, and Voltaria forwards the claim. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 21757.1,
+      "cost_usd": 0.04358530000000001,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-05",
+      "category": "support",
+      "question": "A customer with 6 years of tenure wants to leave because of the price. What loyalty gesture can the retention agent offer?",
+      "answer": "With 6 years of tenure, the customer qualifies for the top tier: **one month of subscription fees free plus a €30 credit** [1].\n\n- The gesture is only granted if the customer agrees to stay [1].\n- The one-month-free gesture is limited to once every 12 months [1].\n\nFor a price-related departure, the agent should also:\n\n- Record the reason code **PRICE** in the CRM [3].\n- Compare the customer's yearly cost with **Voltaria Fixe 3 ans** (price certainty) and **Voltaria Essentielle** (lowest current price) [2].\n- **Never match a competitor's price** [2].\n\nIf the customer still wants to leave, they are free to do so: residential offers have no termination fees, and the termination must never be blocked or delayed [4].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer covers every key fact in the reference: one month free plus a €30 credit for 5+ years of tenure, given only if the customer stays, a comparison with Fixe 3 ans and Essentielle, and never matching a competitor's price. The extra details it adds don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 24487.4,
+      "cost_usd": 0.0577798,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-06",
+      "category": "support",
+      "question": "What is the resolution target for a P3 ticket?",
+      "answer": "The resolution target for a **P3 (standard)** ticket is **15 business days** [1].\n\n- **P3 covers:** information requests, contract changes and meter questions [1].\n- **First response target:** **2 business days** [1].\n- **How it is measured:** from ticket creation [1].\n- **Business days:** Monday to Friday, excluding French public holidays [1].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives the 15 business day resolution target and the 2 business day first response, which matches the reference. The extra details don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 18259.6,
+      "cost_usd": 0.0435425,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-07",
+      "category": "support",
+      "question": "What is the target save rate of the retention team?",
+      "answer": "The Retention team's target save rate is **25%** of termination requests [1]. The Retention team receives every termination request [2]. Agents record each outcome as SAVED or LOST in the CRM [1].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives the target save rate as 25% of termination requests, which matches the reference. The extra details do not contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 18354.1,
+      "cost_usd": 0.0387524,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "sup-08",
+      "category": "support",
+      "question": "A customer is moving next month. Do they need to terminate their contract?",
+      "answer": "No, the customer does not need to terminate their contract: it is **transferred to the new address with the same offer**, at no cost [1].\n\nWhat the customer should do:\n- **Notify Voltaria at least 7 days before** moving [1].\n- **Provide a meter reading on the moving day** to close the account at the old address. They can enter it in the app, or the DNO reads it remotely [1].\n- If the new home has **no active supply point**, a commissioning request goes to the DNO. Lead time is about 5 business days, and the DNO commissioning fee is passed on at cost [1].\n\nFor agents:\n- Log the ticket with the category **move** [1].\n- If the customer brings up termination because of the move, offer to transfer the contract to the new address at no cost [2].",
+      "expected_sources": [
+        "support"
+      ],
+      "routed_sources": [
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives every key fact in the reference: no termination is needed, the contract moves to the new address with the same offer at no cost, Voltaria must be notified at least 7 days ahead, and a meter reading on the moving day closes the old account. The extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 21868.6,
+      "cost_usd": 0.0500176,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-01",
+      "category": "analytics",
+      "question": "How many active customers does Voltaria have?",
+      "answer": "Voltaria has **1993** active customers [1].\n\n- \"Active\" here means customers with no churn date recorded in the customers table [1].\n- The figure comes from the analytics database snapshot dated 2026-09-30 [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives 1993 active customers, which matches the reference. The extra details about how \"active\" is defined and the snapshot date don't contradict it.",
+      "faithfulness": 0.75,
+      "unsupported_claims": [
+        "The active customers belong to Voltaria."
+      ],
+      "grounded": true,
+      "latency_ms": 21117.3,
+      "cost_usd": 0.0494668,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-02",
+      "category": "analytics",
+      "question": "Which region has the most active customers?",
+      "answer": "**Auvergne-Rhône-Alpes** has the most active customers, with **427** active customers [1].\n\n- The figure counts customers whose status is 'active' in each region, ranked from highest to lowest [1].\n- It comes from the analytics database snapshot dated 2026-09-30 [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer names the same region (Auvergne-Rhône-Alpes) and the same count (427) as the reference. The extra details it adds don't contradict anything.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 21614.2,
+      "cost_usd": 0.05514370000000001,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-03",
+      "category": "analytics",
+      "question": "What is the churn rate of each offer?",
+      "answer": "Churn rates by offer (analytics snapshot of 2026-09-30), from highest to lowest [1]:\n\n| Offer | Total customers | Churned customers | Churn rate |\n| --- | --- | --- | --- |\n| Voltaria Essentielle | 607 | 199 | 32.78% |\n| Voltaria Pro Flex | 279 | 51 | 18.28% |\n| Voltaria Verte | 678 | 97 | 14.31% |\n| Voltaria Fixe 3 ans | 555 | 43 | 7.75% |\n| Voltaria Drive | 281 | 17 | 6.05% |\n\nThe churn rate is the number of customers with status \"churned\" divided by all customers on that offer [1].\n\n- **Voltaria Essentielle** has the highest churn. About one in three of its customers have churned [1].\n- **Voltaria Drive** has the lowest churn at 6.05%, followed by **Voltaria Fixe 3 ans** at 7.75% [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "All five offers line up with the reference IDs, and the churn rates match it once rounded (32.78≈32.80, 18.28≈18.30, 14.31≈14.30, 7.75≈7.70, 6.05≈6.00). The ordering matches too.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 26732.3,
+      "cost_usd": 0.0691486,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-04",
+      "category": "analytics",
+      "question": "How many support tickets are currently open?",
+      "answer": "There are **23** open support tickets [1].\n\n- This is a count of tickets with status `'open'` in the support tickets table [1].\n- The figure comes from an analytics snapshot dated **2026-09-30**, so it may not reflect the current number [1].\n- The query counts only the exact status `'open'`. If other unresolved statuses exist (for example, \"in progress\"), they are not included [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives 23 open tickets, which matches the reference. The extra caveats about the snapshot date and which statuses are counted don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 23890.4,
+      "cost_usd": 0.051997999999999996,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-05",
+      "category": "analytics",
+      "question": "What is the average CSAT score by ticket category?",
+      "answer": "Average CSAT by ticket category, highest to lowest (analytics snapshot 2026-09-30) [1]:\n\n| Category | Avg CSAT | Rated tickets | Total tickets |\n| --- | --- | --- | --- |\n| outage | 4.30 | 209 | 302 |\n| contract | 4.16 | 259 | 371 |\n| meter | 4.00 | 244 | 370 |\n| move | 3.83 | 221 | 306 |\n| billing | 3.83 | 540 | 803 |\n\n- **Highest:** outage tickets, with 4.30 [1].\n- **Lowest:** move and billing, tied at 3.83 [1].\n- **Volume:** billing has the most tickets: 803 in total, 540 of them rated [1].\n- **Method:** each average covers only tickets that have a CSAT rating. Tickets without a score are left out, which is why \"rated tickets\" is lower than \"total tickets\" [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "All five category averages match the reference exactly, and the ranking is the same. The extra ticket counts don't contradict anything in the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 26501.1,
+      "cost_usd": 0.0637837,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-06",
+      "category": "analytics",
+      "question": "What was the total amount billed to customers in August 2026?",
+      "answer": "The total amount billed to customers in August 2026 was **€181,920.53** [1].\n\n- This is the sum of the monthly billed amounts for month '2026-08' in the analytics database (snapshot 2026-09-30) [1].\n- The total covers **2020** distinct billed customers [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives €181,920.53, which matches the reference exactly. The extra details about the customer count and snapshot don't contradict it.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 24948.9,
+      "cost_usd": 0.0518511,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-07",
+      "category": "analytics",
+      "question": "What is the average monthly consumption in kWh of Voltaria Drive customers compared with Voltaria Essentielle customers?",
+      "answer": "**Voltaria Drive customers use more electricity on average: 482.97 kWh per month, compared with 387.06 kWh per month for Voltaria Essentielle customers** [1].\n\n| Offer | Customers | Avg monthly consumption per customer |\n| --- | --- | --- |\n| Voltaria Drive | 280 | 482.97 kWh |\n| Voltaria Essentielle | 505 | 387.06 kWh |\n\n- Drive customers use about 95.91 kWh more per month, roughly 24.8% higher than Essentielle customers [1].\n- **How it was calculated:** Each customer's average monthly kWh was computed from the monthly consumption records. Those per-customer averages were then averaged within each offer [1].\n- **Data source:** The analytics database snapshot dated 2026-09-30 [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 0.5,
+      "correctness_rationale": "The answer gets the direction right (Drive is higher than Essentielle), but its figures don't match the reference: Drive is 482.97 kWh against 505.20, and Essentielle is 387.06 against 389.50. The Drive gap is about 4.4%, too large to count as rounding, likely because it averaged per-customer averages.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 24474.2,
+      "cost_usd": 0.0715488,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "ana-08",
+      "category": "analytics",
+      "question": "What is the average resolution time, in days, of billing tickets closed in 2026?",
+      "answer": "Billing tickets closed in 2026 took an **average of 6.84 days** to resolve [1].\n\n- **Sample:** 403 billing tickets with status 'closed' and a 2026 closing date [1].\n- **Method:** The resolution time for each ticket is the closing date minus the opening date, averaged across all tickets [1].\n- **Coverage:** The figure comes from an analytics snapshot dated 2026-09-30, so tickets closed after that date are not included [1].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives 6.84 days and the reference gives 6.80 days. That is a gap of under 1%, so it counts as a minor numerical difference and does not contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 20426.9,
+      "cost_usd": 0.05706090000000001,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "mul-01",
+      "category": "multi_source",
+      "question": "Which offer has the highest churn rate, and what does the retention playbook say an agent can propose to a customer who wants to leave because of the price?",
+      "answer": "**Voltaria Essentielle** has the highest churn rate, at **32.78%** (199 churned out of 607 customers) [1]. The other offers rank as follows [1]:\n\n- Voltaria Pro Flex: 18.28%\n- Voltaria Verte: 14.31%\n- Voltaria Fixe 3 ans: 7.75%\n- Voltaria Drive: 6.05%\n\n**Retention playbook for price-related departures:**\n\n- Record the reason code **PRICE** (\"Customer finds the price too high\") in the CRM [2].\n- Compare the customer's yearly cost with **Voltaria Fixe 3 ans** (price certainty) and **Voltaria Essentielle** (lowest current price) [3].\n- **Never match a competitor's price** [3].\n- For **Voltaria Drive customers**, also offer a free smart-charging audit [3].\n\nKeep in mind the golden rule: customers are **free to leave** at any time, residential offers have no termination fees, and an agent must never block or delay a termination [4].",
+      "expected_sources": [
+        "analytics",
+        "support"
+      ],
+      "routed_sources": [
+        "analytics",
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 0.5,
+      "correctness_rationale": "The answer correctly names Essentielle at about 32.8% churn, includes the comparison with Fixe 3 ans and Essentielle, and says never to match a competitor's price. It leaves out the tenure-based loyalty gestures: 1 month free from 2 years, plus a EUR 30 credit from 5 years.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 38595.4,
+      "cost_usd": 0.15710599999999997,
+      "llm_calls": 7,
+      "error": null
+    },
+    {
+      "id": "mul-02",
+      "category": "multi_source",
+      "question": "How many billing tickets are currently open, and what is the resolution target for a billing dispute?",
+      "answer": "There are **11** open billing tickets, and the resolution target for a billing dispute is **10 business days** [1][2].\n\n- **Open billing tickets:** 11 support tickets with category 'billing' have status 'open', according to the analytics snapshot of 2026-09-30 [1].\n- **Resolution target:** 10 business days from the date the dispute is received [2]. Billing disputes above €200 are P2 (high) priority, which also has a 10-business-day resolution target and a 1-business-day first response [3].\n- **Other handling rules** [2]:\n  - Acknowledge the dispute within 1 business day.\n  - Disputes up to €200 are handled by Tier 1 agents.\n  - Disputes above €200 go to the Billing Expertise team (Tier 2) within 24 hours.\n- **Business days** are Monday to Friday, excluding French public holidays [3].",
+      "expected_sources": [
+        "analytics",
+        "support"
+      ],
+      "routed_sources": [
+        "analytics",
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives 11 open billing tickets and a 10-business-day resolution target, and it also mentions the 1-business-day acknowledgment. Its extra details don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 17617.3,
+      "cost_usd": 0.0771063,
+      "llm_calls": 5,
+      "error": null
+    },
+    {
+      "id": "mul-03",
+      "category": "multi_source",
+      "question": "What is the price per kWh of the offer that has the most active customers?",
+      "answer": "The offer with the most active customers is **Voltaria Verte (VERTE)**, priced at **€0.2050 per kWh** including taxes [1][4].\n\n- **Active customers:** 581, the highest of any offer as of the 2026-09-30 snapshot [1].\n- **Pricing:** Indexed on the regulated sales tariff **plus 3%**, with 100% renewable electricity [2][4].\n- **Monthly fee:** €12.90 for a 6 kVA meter (prices from 1 August 2026) [4].\n- **Price changes:** They follow the regulated tariff and are notified one month in advance [4].",
+      "expected_sources": [
+        "analytics"
+      ],
+      "routed_sources": [
+        "analytics",
+        "products"
+      ],
+      "routing_precision": 0.5,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer names the same offer as the reference (Voltaria Verte, VERTE), the same price (€0.205/kWh) and the same count (581 active customers). The extra details don't contradict anything in the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 22988.3,
+      "cost_usd": 0.0893871,
+      "llm_calls": 5,
+      "error": null
+    },
+    {
+      "id": "mul-04",
+      "category": "multi_source",
+      "question": "How many P1 tickets were opened in 2026, and what first-response time is required for a P1 ticket?",
+      "answer": "**51 P1 tickets** were opened in 2026, and a P1 ticket requires a first response within **30 minutes** [1][2].\n\n- **Ticket count:** The analytics query counted 51 P1 tickets opened between 2026-01-01 and 2026-12-31 [1]. The database snapshot is dated 2026-09-30, so this figure likely covers only tickets up to that date, not the full year [1].\n- **First response:** P1 (critical) tickets require a first response within **30 minutes** and resolution within **4 hours** [2]. Service levels are measured from ticket creation [2].\n- **P1 definition:** A P1 involves risk to people, a medically dependent customer without power, or a mass incident [2].\n- **MDC customers:** Any outage affecting an MDC customer is a P1, and the customer must be **called back within 30 minutes** [3]. The agent also escalates immediately to the DNO priority line and informs the shift supervisor [3].",
+      "expected_sources": [
+        "analytics",
+        "support"
+      ],
+      "routed_sources": [
+        "analytics",
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer gives 51 P1 tickets and a 30-minute first response, which matches the reference. It also correctly gives the 4-hour resolution target, and none of its extra details contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 22075.6,
+      "cost_usd": 0.08580770000000001,
+      "llm_calls": 5,
+      "error": null
+    },
+    {
+      "id": "mul-05",
+      "category": "multi_source",
+      "question": "What is the average monthly bill of Voltaria Drive customers, and what wallbox offer is available to them?",
+      "answer": "**Average monthly bill:** Voltaria Drive customers are billed an average of **€100.13 per month**. This figure comes from 280 customers with billing records, as of the 2026-09-30 snapshot [1]. It was calculated by first taking each customer's average monthly billed amount, then averaging those values across all customers [1].\n\n**Wallbox offer:**\n- A **7.4 kW wallbox installed by a certified partner for €1,190**, installation included [2].\n- Voltaria Drive customers get an **installation credit of €300** on their electricity bill, which brings the net cost to €890 [2].\n- Installation is scheduled within three weeks of the order [2].\n\nThe Voltaria app can also connect to compatible wallboxes and automatically schedule charging during off-peak hours [4].",
+      "expected_sources": [
+        "analytics",
+        "products"
+      ],
+      "routed_sources": [
+        "analytics",
+        "products"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 0.5,
+      "correctness_rationale": "The wallbox offer matches the reference: 7.4 kW for €1,190, a €300 credit, and a net cost of €890. But the average bill is wrong: the answer says €100.13 and the reference says €104.07.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 23828.3,
+      "cost_usd": 0.0846901,
+      "llm_calls": 5,
+      "error": null
+    },
+    {
+      "id": "mul-06",
+      "category": "multi_source",
+      "question": "Can an agent paste a customer's billing data into a public AI chatbot to draft a reply to a billing dispute, and how quickly must the dispute be acknowledged?",
+      "answer": "**No.** An agent must not paste a customer's billing data into a public AI chatbot. **The dispute must be acknowledged within 1 business day** [3].\n\n**AI tool use**\n- Public generative-AI tools may only be used with **Public** information [1].\n- Customer personal data and payment data are classified as **Restricted** [2].\n- Restricted data must stay in approved systems [2].\n- Internal, Confidential and Restricted information may only be processed in the approved **Voltaria AI Workspace**. That tool keeps data within the EU and does not use it for model training [1].\n- To get AI help drafting the reply, the agent should use the Voltaria AI Workspace [1].\n\n**Acknowledgement and handling**\n- Acknowledge the dispute within **1 business day**, using the customer's preferred channel [3].\n- Tier 1 agents handle disputes **up to €200** [3].\n- Disputes **above €200** go to the **Billing Expertise team (Tier 2) within 24 hours**, with the analysis already done [3]. They are **P2** tickets with a **1 business day** first response [4].\n- The resolution target is **10 business days** from the date the dispute is received [3].\n- Business days are Monday to Friday, excluding French public holidays [4].",
+      "expected_sources": [
+        "policies",
+        "support"
+      ],
+      "routed_sources": [
+        "policies",
+        "support"
+      ],
+      "routing_precision": 1.0,
+      "routing_recall": 1.0,
+      "answerable": true,
+      "abstained": false,
+      "correctness": 1.0,
+      "correctness_rationale": "The answer covers every key fact in the reference: the answer is no, customer personal and payment data is Restricted, public AI tools may only be used with Public information, the Voltaria AI Workspace is the approved internal tool, and the dispute must be acknowledged within 1 business day. The extra details it adds don't contradict the reference.",
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 29345.9,
+      "cost_usd": 0.07733290000000001,
+      "llm_calls": 5,
+      "error": null
+    },
+    {
+      "id": "oos-01",
+      "category": "out_of_scope",
+      "question": "What is Voltaria Energy's share price today?",
+      "answer": "I could not find this information in Voltaria's knowledge sources.",
+      "expected_sources": [],
+      "routed_sources": [],
+      "routing_precision": null,
+      "routing_recall": null,
+      "answerable": false,
+      "abstained": true,
+      "correctness": null,
+      "correctness_rationale": null,
+      "faithfulness": null,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 8403.9,
+      "cost_usd": 0.0078163,
+      "llm_calls": 1,
+      "error": null
+    },
+    {
+      "id": "oos-02",
+      "category": "out_of_scope",
+      "question": "Who won the 2022 football World Cup?",
+      "answer": "I could not find this information in Voltaria's knowledge sources.",
+      "expected_sources": [],
+      "routed_sources": [],
+      "routing_precision": null,
+      "routing_recall": null,
+      "answerable": false,
+      "abstained": true,
+      "correctness": null,
+      "correctness_rationale": null,
+      "faithfulness": null,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 3907.1,
+      "cost_usd": 0.007688200000000001,
+      "llm_calls": 1,
+      "error": null
+    },
+    {
+      "id": "oos-03",
+      "category": "out_of_scope",
+      "question": "What is the annual salary of Voltaria's CEO?",
+      "answer": "I could not find this information in Voltaria's knowledge sources.",
+      "expected_sources": [],
+      "routed_sources": [],
+      "routing_precision": null,
+      "routing_recall": null,
+      "answerable": false,
+      "abstained": true,
+      "correctness": null,
+      "correctness_rationale": null,
+      "faithfulness": null,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 4692.1,
+      "cost_usd": 0.008321600000000002,
+      "llm_calls": 1,
+      "error": null
+    },
+    {
+      "id": "oos-04",
+      "category": "out_of_scope",
+      "question": "How many days of paid leave do employees of Voltaria's German subsidiary get?",
+      "answer": "I could not find this information in Voltaria's knowledge sources.",
+      "expected_sources": [],
+      "routed_sources": [
+        "policies"
+      ],
+      "routing_precision": null,
+      "routing_recall": null,
+      "answerable": false,
+      "abstained": true,
+      "correctness": null,
+      "correctness_rationale": null,
+      "faithfulness": null,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 24032.0,
+      "cost_usd": 0.05155560000000001,
+      "llm_calls": 4,
+      "error": null
+    },
+    {
+      "id": "oos-05",
+      "category": "out_of_scope",
+      "question": "What is the price per kWh of Voltaria's natural gas offer?",
+      "answer": "I could not find this information in Voltaria's knowledge sources.",
+      "expected_sources": [],
+      "routed_sources": [
+        "products"
+      ],
+      "routing_precision": null,
+      "routing_recall": null,
+      "answerable": false,
+      "abstained": true,
+      "correctness": null,
+      "correctness_rationale": null,
+      "faithfulness": null,
+      "unsupported_claims": [],
+      "grounded": true,
+      "latency_ms": 19890.7,
+      "cost_usd": 0.050751000000000004,
+      "llm_calls": 4,
+      "error": null
+    }
+  ]
+}

@@ -8,6 +8,10 @@
 ![Lint](https://img.shields.io/badge/lint-ruff-261230)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
+> **Measured on a 46-question golden set:** 96.3% answer accuracy, 99.2% faithfulness to the
+> retrieved evidence, 100% routing recall and 100% abstention on out-of-scope questions, with
+> 0 errors ([details](#end-to-end-llm-as-judge)).
+
 Most RAG demos stop at "embed PDFs, retrieve top-k, prompt an LLM". Real enterprise questions
 are messier: *"Which offer churns the most, and what can a retention agent propose to those
 customers?"* needs a **SQL query** on business data **and** a **procedure** from the support
@@ -38,6 +42,31 @@ answers whose claims are backed by the retrieved evidence:
 > The knowledge base belongs to **Voltaria Energy**, a fictional French electricity retailer
 > created for this project (16 documents and a 40,000-row SQLite database generated with a
 > fixed seed). Point `POLYRAG_CORPUS_DIR` at your own folders to use your documents.
+
+---
+
+## Use cases
+
+PolyRAG targets one pattern that plain RAG handles badly: **questions whose answer is spread
+across written knowledge and business data**, asked by people who need a sourced answer they
+can act on. In the demo company:
+
+| Who asks | Example question | Sources used |
+|---|---|---|
+| Customer-support agent, during a call | "A customer with 6 years of tenure wants to leave because of the price: what can I offer?" | support procedures |
+| Support team lead | "How many billing tickets are open, and what is our resolution target?" | SQL + support procedures |
+| Product or marketing manager | "What is the average monthly bill of Drive customers, and which wallbox offer do they get?" | SQL + product documentation |
+| Any employee (HR, IT self-service) | "Can I paste customer data into a public AI chatbot?" | internal policies |
+| Manager or analyst | "Which offer has the highest churn rate?" | SQL |
+
+What it deliberately does not do: open-ended chat, general-knowledge answers (out-of-scope
+questions get an explicit "not found"), or any write action on documents or data.
+
+The same architecture transposes to any organisation that has procedures on one side and a
+database on the other: insurance (claims procedures and the claims database), banking (product
+terms and account data), IT service desks (runbooks and incident tickets), public services
+(regulations and case files). Adapting it means replacing the three corpus folders and pointing
+the `SqlDatabase` port at the real warehouse, typically through a read-only replica.
 
 ---
 
@@ -124,18 +153,55 @@ Full report: [reports/retrieval.md](reports/retrieval.md).
 ### End-to-end (LLM-as-judge)
 
 `polyrag eval e2e` runs the full graph on the 46 questions (policies, products, support,
-analytics, multi-source and out-of-scope) and reports:
+analytics, multi-source and out-of-scope), then grades each answer with an LLM judge. For
+analytics questions the judge compares against the **result of a reference SQL query executed
+at evaluation time**, so reference figures are exact.
 
-| Metric | How it is measured |
-|---|---|
-| Answer accuracy | Judge compares the answer with a reference. For SQL questions the **reference query is executed**, so the reference figures are exact |
-| Faithfulness | Share of the answer's atomic claims supported by the retrieved evidence |
-| Routing precision / recall | Sources chosen by the router vs. expected sources |
-| Abstention accuracy | Out-of-scope questions answered with an explicit "not found" |
-| Latency p50 / p95, cost, LLM calls | Measured per question (token usage × model pricing) |
+Results (Claude Opus 5.5 for every role, run on 2026-10-23):
 
-The report is written to `reports/e2e.md`. Run it with an API key (see [Quickstart](#quickstart)),
-or from the **End-to-end evaluation** GitHub workflow.
+| Metric | Result | How it is measured |
+|---|---|---|
+| Answer accuracy | **96.3%** | Judge grades each answer against the reference: correct = 1, partial = 0.5 |
+| Strict accuracy | **92.7%** | Fully correct answers: 38 of the 41 answerable questions, the other 3 are partial |
+| Faithfulness | **99.2%** | Share of the answer's atomic claims supported by the retrieved evidence |
+| Routing recall / precision | **100% / 97.6%** | Sources chosen by the router vs. expected sources |
+| Abstention on out-of-scope questions | **100%** (5 / 5) | Explicit "not found" instead of an invented answer |
+| False abstention | **0%** | Answerable questions wrongly declined |
+| LLM calls per question | 4.0 | Router, graders, SQL agent, synthesizer, verifier |
+| API-equivalent cost per question | $0.054 | Token usage × list price (judge excluded) |
+| Latency p50 / p95 | 21 s / 27 s | See the note below |
+| Errors | 0 | |
+
+| Category | Questions | Accuracy | Faithfulness |
+|---|---|---|---|
+| Policies | 10 | 100% | 99.1% |
+| Products | 9 | 100% | 100% |
+| Support | 8 | 100% | 100% |
+| Analytics (SQL) | 8 | 93.8% | 96.9% |
+| Multi-source (SQL + documents) | 6 | 83.3% | 100% |
+| Out of scope | 5 | 100% abstention | - |
+
+**Error analysis.** The three answers graded "partial" were checked by hand:
+
+- *ana-07, mul-05* ("average monthly consumption / bill of Drive customers"): the SQL agent
+  averaged each customer's monthly average, while the reference averages all customer-months.
+  Its figures are exact for that reading (482.97 kWh and €100.13); the question is ambiguous. A
+  metric glossary (semantic layer) given to the SQL agent would remove this class of error.
+- *mul-01* (churn + retention offers): the "Loyalty gestures" section of the retention playbook
+  was not in the top 5 passages for the router's sub-query, so the answer omits it. Expanding
+  retrieved chunks to their sibling sections would fix it.
+
+The two claims counted as unfaithful restate the question itself ("the wine is worth €120"),
+which the judge did not find in the evidence.
+
+**Reading these numbers.** The run went through the Claude Code CLI on a Claude subscription
+(`claude-code` provider): latency includes the CLI start-up of each of the ~4 sequential calls,
+so it overstates what the API gives. The judge is the same model as the system, which can
+favour its own style; `POLYRAG_JUDGE_MODEL` lets you use another one. Prompts were not tuned on
+these questions after the run.
+
+Full report: [reports/e2e.md](reports/e2e.md). Re-run it with `polyrag eval e2e`, or from the
+**End-to-end evaluation** GitHub workflow.
 
 ---
 
@@ -217,11 +283,11 @@ Step-by-step guide: [docs/deployment.md](docs/deployment.md).
 
 ```bash
 make check            # ruff + mypy --strict + pytest (what CI runs)
-make test             # 56 tests, ~10 s, fully offline
+make test             # 68 tests, ~10 s, fully offline
 uv run pre-commit install
 ```
 
-- **Tests**: unit tests for chunking, BM25, RRF, SQL guardrails, metrics and the Claude adapter;
+- **Tests**: unit tests for chunking, BM25, RRF, SQL guardrails, metrics and both Claude adapters;
   integration tests that run the full LangGraph pipeline, the API, the CLI and both evaluations
   against the real corpus, with a scripted LLM. Coverage: 83%.
 - **CI** (`.github/workflows/ci.yml`): lint, types and tests on Python 3.11 to 3.13, retrieval
@@ -252,6 +318,8 @@ docs/adr/            architecture decision records
 
 ## Roadmap
 
+- Metric glossary (semantic layer) in the SQL agent's context, from the error analysis above.
+- Sibling-section expansion of retrieved chunks, from the same analysis.
 - Conversation memory (LangGraph checkpointer) for follow-up questions.
 - BigQuery adapter for the `SqlDatabase` port.
 - Qdrant sparse vectors to move BM25 into the vector database for large corpora.
@@ -264,7 +332,9 @@ docs/adr/            architecture decision records
 PolyRAG est un **assistant RAG multi-agents** : un agent routeur (LangGraph) choisit les sources,
 des agents spécialisés interrogent en parallèle trois bases documentaires (recherche hybride
 BM25 + vecteurs, Qdrant) et une base SQL (text-to-SQL sécurisé), puis un agent de synthèse
-rédige une réponse sourcée, vérifiée par un agent de contrôle des hallucinations. Le projet
+rédige une réponse sourcée, vérifiée par un agent de contrôle des hallucinations. Sur un jeu de
+46 questions : 96 % de réponses correctes, 99 % de fidélité aux sources, 100 % de questions hors
+périmètre correctement refusées. Le projet
 inclut un jeu d'évaluation de 46 questions, un banc d'essai de la recherche utilisé comme
 **quality gate en CI**, une évaluation de bout en bout par LLM juge, une API FastAPI en
 streaming, une image Docker et un déploiement **Cloud Run** en Terraform.
