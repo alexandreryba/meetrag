@@ -167,6 +167,13 @@ docker compose up --build       # http://localhost:8080
 | Claude API (default) | `ANTHROPIC_API_KEY`, `POLYRAG_LLM_MODEL=claude-opus-5-5` |
 | Claude on Vertex AI | `POLYRAG_LLM_PROVIDER=anthropic-vertex`, `POLYRAG_GCP_PROJECT`, Application Default Credentials |
 | Any LangChain chat model | `POLYRAG_LLM_PROVIDER=langchain`, `POLYRAG_LLM_MODEL=google_genai:gemini-2.5-flash` (install the provider package) |
+| Claude subscription, local only | `uv sync --extra subscription`, `POLYRAG_LLM_PROVIDER=claude-code`: runs through your Claude Code login (Pro or Max plan), no API key |
+
+The `claude-code` provider drives the Claude Code CLI through the
+[Claude Agent SDK](https://pypi.org/project/claude-agent-sdk/), one tool-free turn per call,
+without loading your Claude Code settings or MCP servers. It is meant for development and
+evaluation on your own machine: subscription access is personal, so the deployed service uses
+the API or Vertex AI. Each call starts a CLI process, which adds about 2 s of latency.
 
 The router, graders, SQL agent and verifier use `POLYRAG_LLM_FAST_MODEL` with low reasoning
 effort; the synthesizer uses `POLYRAG_LLM_MODEL`. Set the fast model to `claude-haiku-5-5` to cut

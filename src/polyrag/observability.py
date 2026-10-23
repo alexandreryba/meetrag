@@ -38,10 +38,15 @@ def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
     return (input_tokens * input_price + output_tokens * output_price) / 1_000_000
 
 
-def record_usage(model: str, input_tokens: int, output_tokens: int) -> None:
+def record_usage(
+    model: str, input_tokens: int, output_tokens: int, *, cost_usd: float | None = None
+) -> None:
+    """Add one call to the current scope; ``cost_usd`` overrides the price-table estimate."""
     usage = _current_usage.get()
     if usage is not None:
-        usage.add(input_tokens, output_tokens, estimate_cost(model, input_tokens, output_tokens))
+        if cost_usd is None:
+            cost_usd = estimate_cost(model, input_tokens, output_tokens)
+        usage.add(input_tokens, output_tokens, cost_usd)
 
 
 class _JsonFormatter(logging.Formatter):

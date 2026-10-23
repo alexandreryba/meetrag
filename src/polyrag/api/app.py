@@ -22,7 +22,7 @@ from polyrag.api.schemas import AskRequest, Readiness, SourceInfo
 from polyrag.config import get_settings
 from polyrag.container import Container
 from polyrag.domain.models import AnswerResult, Source
-from polyrag.domain.ports import LLMConfigurationError
+from polyrag.domain.ports import LLMConfigurationError, LLMUnavailableError
 from polyrag.observability import configure_logging
 
 if TYPE_CHECKING:
@@ -32,6 +32,12 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("polyrag.api")
 STATIC_DIR = Path(__file__).parent / "static"
+
+
+def _unavailable_detail(exc: LLMUnavailableError) -> str:
+    if isinstance(exc, LLMConfigurationError):
+        return f"LLM provider not configured: {exc}"
+    return f"LLM provider unavailable: {exc}"
 
 
 def create_app(container: Container | None = None) -> FastAPI:
@@ -92,11 +98,11 @@ def create_app(container: Container | None = None) -> FastAPI:
             content={"detail": "The language model provider returned an error. Try again."},
         )
 
-    @app.exception_handler(LLMConfigurationError)
-    async def not_configured(_: Request, exc: LLMConfigurationError) -> JSONResponse:
+    @app.exception_handler(LLMUnavailableError)
+    async def unavailable(_: Request, exc: LLMUnavailableError) -> JSONResponse:
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={"detail": f"LLM provider not configured: {exc}"},
+            content={"detail": _unavailable_detail(exc)},
         )
 
     def require_api_key(x_api_key: Annotated[str | None, Header()] = None) -> None:
@@ -145,11 +151,11 @@ def create_app(container: Container | None = None) -> FastAPI:
             try:
                 async for event in container.assistant.stream(payload.question):
                     yield f"event: {event['type']}\ndata: {json.dumps(event, default=str)}\n\n"
-            except (anthropic.APIError, LLMConfigurationError) as exc:
+            except (anthropic.APIError, LLMUnavailableError) as exc:
                 logger.error("model provider error during stream: %s", exc)
                 detail = (
-                    f"LLM provider not configured: {exc}"
-                    if isinstance(exc, LLMConfigurationError)
+                    _unavailable_detail(exc)
+                    if isinstance(exc, LLMUnavailableError)
                     else "The language model provider returned an error."
                 )
                 error = {"type": "error", "detail": detail}

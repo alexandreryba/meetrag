@@ -24,6 +24,10 @@ def build_llm(settings: Settings, model: str) -> LLM:
         return AnthropicLLM.on_vertex(
             model, project_id=settings.gcp_project, region=settings.gcp_region
         )
+    if settings.llm_provider is LLMProvider.CLAUDE_CODE:
+        from polyrag.infrastructure.llm.claude_code_llm import ClaudeCodeLLM
+
+        return ClaudeCodeLLM(model, cli_path=settings.claude_cli_path)
     from polyrag.infrastructure.llm.langchain_llm import LangChainLLM
 
     return LangChainLLM(model)
