@@ -18,6 +18,8 @@ class LLMProvider(StrEnum):
     ANTHROPIC = "anthropic"  # Claude API (ANTHROPIC_API_KEY)
     ANTHROPIC_VERTEX = "anthropic-vertex"  # Claude on Google Cloud Vertex AI (ADC)
     LANGCHAIN = "langchain"  # any LangChain chat model, e.g. "google_genai:gemini-2.5-flash"
+    # Local Claude Code CLI billed to a Claude Pro/Max subscription: local use only.
+    CLAUDE_CODE = "claude-code"
 
 
 class Settings(BaseSettings):
@@ -44,6 +46,7 @@ class Settings(BaseSettings):
     llm_refusal_fallback: bool = True
     gcp_project: str | None = None
     gcp_region: str = "global"
+    claude_cli_path: str | None = None  # claude-code provider: CLI to use (default: bundled)
 
     # --- Retrieval --------------------------------------------------------------------------
     embedding_model: str = "BAAI/bge-small-en-v1.5"

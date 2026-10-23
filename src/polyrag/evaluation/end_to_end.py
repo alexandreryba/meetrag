@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field
 
 from polyrag.agents.synthesis import format_evidence
 from polyrag.domain.models import Source
-from polyrag.domain.ports import LLMError, QueryError
+from polyrag.domain.ports import LLMError, LLMUnavailableError, QueryError
 from polyrag.evaluation.metrics import mean, percentile, set_precision_recall
 
 if TYPE_CHECKING:
@@ -90,6 +90,7 @@ class ItemResult(BaseModel):
 class EndToEndReport(BaseModel):
     created_at: str
     models: dict[str, str]
+    notes: list[str] = Field(default_factory=list)
     questions: int
     summary: dict[str, float]
     by_category: dict[str, dict[str, float]]
@@ -148,6 +149,8 @@ async def _evaluate_item(assistant: Assistant, judge: Judge, item: GoldenItem) -
     )
     try:
         result = await assistant.ask(item.question)
+    except LLMUnavailableError:
+        raise  # no point grading the remaining questions
     except Exception as exc:  # an eval run must report failures, not stop on them
         logger.exception("question %s failed", item.id)
         record.error = f"{type(exc).__name__}: {exc}"
@@ -210,6 +213,7 @@ async def evaluate_end_to_end(
     items: Sequence[GoldenItem],
     *,
     models: dict[str, str],
+    notes: Sequence[str] = (),
     concurrency: int = 1,
     on_progress: Callable[[ItemResult], None] | None = None,
 ) -> EndToEndReport:
@@ -230,6 +234,7 @@ async def evaluate_end_to_end(
     return EndToEndReport(
         created_at=datetime.now(UTC).isoformat(timespec="seconds"),
         models=models,
+        notes=list(notes),
         questions=len(records),
         summary=_summary(records),
         by_category={category: _summary(group) for category, group in sorted(grouped.items())},
@@ -246,6 +251,7 @@ def end_to_end_markdown(report: EndToEndReport) -> str:
         + ", ".join(f"{role} `{model}`" for role, model in report.models.items())
         + ".",
         "",
+        *(f"> {note}\n" for note in report.notes),
         "| Metric | Value |",
         "|---|---|",
         f"| Answer accuracy (correct = 1, partial = 0.5) | {s['answer_accuracy']:.1%} |",

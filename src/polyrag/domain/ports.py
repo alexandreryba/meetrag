@@ -23,10 +23,14 @@ class LLMError(RuntimeError):
     """Raised when a model call fails in a way the agents should handle (refusal, bad output)."""
 
 
-class LLMConfigurationError(RuntimeError):
-    """Raised when the model provider cannot be called at all (e.g. missing credentials).
+class LLMUnavailableError(RuntimeError):
+    """Raised when the model provider cannot serve requests at all (missing credentials,
+    exhausted usage limit). Unlike ``LLMError`` an agent cannot recover from it, so it
+    propagates to the caller instead of degrading the answer."""
 
-    Unlike ``LLMError`` it is not recoverable by an agent, so it propagates to the caller."""
+
+class LLMConfigurationError(LLMUnavailableError):
+    """The provider is not configured (e.g. no credentials found)."""
 
 
 class QueryError(ValueError):

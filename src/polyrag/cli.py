@@ -13,9 +13,9 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
-from polyrag.config import get_settings
+from polyrag.config import LLMProvider, get_settings
 from polyrag.container import Container
-from polyrag.domain.ports import LLMConfigurationError
+from polyrag.domain.ports import LLMUnavailableError
 from polyrag.observability import configure_logging
 
 if TYPE_CHECKING:
@@ -68,8 +68,8 @@ def ask(
     with open_container() as container:
         try:
             result = asyncio.run(container.assistant.ask(question))
-        except LLMConfigurationError as exc:
-            console.print(f"[red]LLM provider not configured:[/red] {exc}")
+        except LLMUnavailableError as exc:
+            console.print(f"[red]LLM provider unavailable:[/red] {exc}")
             raise typer.Exit(code=2) from exc
     if as_json:
         console.print_json(result.model_dump_json())
@@ -145,20 +145,33 @@ def eval_end_to_end(
             items = [item for item in items if item.category == category]
         items = items[:limit] if limit else items
         console.print(f"Evaluating {len(items)} questions...")
-        report = asyncio.run(
-            evaluate_end_to_end(
-                container.assistant,
-                Judge(container.judge_llm, container.database),
-                items,
-                models={
-                    "synthesis": settings.llm_model,
-                    "agents": settings.llm_fast_model,
-                    "judge": settings.judge_model,
-                },
-                concurrency=concurrency,
-                on_progress=progress,
+        notes = []
+        if settings.llm_provider is LLMProvider.CLAUDE_CODE:
+            notes.append(
+                "Run through the Claude Code CLI on a Claude subscription: latency includes "
+                "the CLI start-up of every call, and costs are the API-equivalent prices "
+                "reported by the CLI (the subscription is what was billed)."
             )
-        )
+        try:
+            report = asyncio.run(
+                evaluate_end_to_end(
+                    container.assistant,
+                    Judge(container.judge_llm, container.database),
+                    items,
+                    models={
+                        "provider": settings.llm_provider.value,
+                        "synthesis": settings.llm_model,
+                        "agents": settings.llm_fast_model,
+                        "judge": settings.judge_model,
+                    },
+                    notes=notes,
+                    concurrency=concurrency,
+                    on_progress=progress,
+                )
+            )
+        except LLMUnavailableError as exc:
+            console.print(f"[red]Evaluation stopped, LLM provider unavailable:[/red] {exc}")
+            raise typer.Exit(code=2) from exc
     markdown = end_to_end_markdown(report)
     settings.reports_dir.mkdir(parents=True, exist_ok=True)
     (settings.reports_dir / "e2e.md").write_text(markdown, encoding="utf-8")
