@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Local data: index, analytics database and model caches are rebuilt by `polyrag ingest`
+.polyrag/
+.cache/
+
+# Generated reports (the committed results are force-added on purpose)
+reports/*
+!reports/retrieval.md
+!reports/retrieval.json
+!reports/e2e.md
+!reports/e2e.json
+
+# Secrets and editors
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+.DS_Store
+
+# Terraform
+deploy/terraform/.terraform/
+deploy/terraform/*.tfstate*
+deploy/terraform/*.tfvars
+!deploy/terraform/example.tfvars
