@@ -6,10 +6,12 @@ from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
 
+from dotenv import load_dotenv
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ENV_FILE = PROJECT_ROOT / ".env"
 
 
 class LLMProvider(StrEnum):
@@ -20,7 +22,10 @@ class LLMProvider(StrEnum):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="POLYRAG_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_prefix="POLYRAG_",
+        env_file=(ENV_FILE, ".env"),  # project root, then the working directory
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     # --- Data -------------------------------------------------------------------------------
@@ -80,8 +85,18 @@ class Settings(BaseSettings):
         return self.index_dir / "voltaria.db"
 
 
+def load_environment(path: Path = ENV_FILE) -> bool:
+    """Export the entries of ``.env`` to the process environment.
+
+    ``Settings`` only reads ``POLYRAG_`` variables, but provider SDKs read their own
+    credentials (``ANTHROPIC_API_KEY``, ``GOOGLE_API_KEY``...) from ``os.environ``.
+    Variables already set in the environment take precedence over the file."""
+    return load_dotenv(path, override=False)
+
+
 @lru_cache
 def get_settings() -> Settings:
+    load_environment()
     return Settings()
 
 
