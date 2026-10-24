@@ -50,7 +50,7 @@ jobs:
         with:
           enable-cache: true
           python-version: "3.12"
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .cache/fastembed
           key: fastembed-${{ hashFiles('src/polyrag/config.py', 'src/polyrag/cli.py') }}
