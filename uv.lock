@@ -2300,7 +2300,7 @@ requires-dist = [
     { name = "rich", specifier = ">=13.7" },
     { name = "sqlglot", specifier = ">=25.0" },
     { name = "typer", specifier = ">=0.12" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.54.0" },
 ]
 provides-extras = ["vertex", "langchain", "subscription"]
 
