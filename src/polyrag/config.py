@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     corpus_dir: Path = PROJECT_ROOT / "data" / "corpus"
     index_dir: Path = PROJECT_ROOT / ".polyrag"
     golden_set: Path = PROJECT_ROOT / "eval" / "golden_set.jsonl"
+    extraction_gold: Path = PROJECT_ROOT / "eval" / "meeting_records_gold.jsonl"
+    # Cache of LLM-extracted meeting records, committed so that a fresh checkout has them.
+    insights_dir: Path = PROJECT_ROOT / "data" / "insights"
     reports_dir: Path = PROJECT_ROOT / "reports"
 
     # --- LLM --------------------------------------------------------------------------------
@@ -58,6 +61,8 @@ class Settings(BaseSettings):
     collection: str = "polyrag_chunks"
     chunk_size: int = 900
     chunk_overlap: int = 120
+    transcript_chunk_size: int = 1100
+    redact_pii: bool = True  # mask emails and phone numbers found in transcripts
     candidates_k: int = 20  # per retriever, before fusion
     top_k: int = 5  # chunks kept per agent after fusion / reranking
     rrf_k: int = 60

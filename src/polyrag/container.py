@@ -10,10 +10,14 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Any
 
 from polyrag.agents.graph import build_graph
+from polyrag.domain.models import Source
 from polyrag.infrastructure.llm import build_llm
+from polyrag.ingestion.meeting_records import MeetingExtractor, write_meeting_records
 from polyrag.ingestion.pipeline import IngestionReport, ingest, load_chunks
+from polyrag.ingestion.transcripts import load_transcripts
 from polyrag.retrieval.bm25 import BM25Index
 from polyrag.retrieval.hybrid import HybridRetriever
+from polyrag.retrieval.meetings import MeetingCatalog
 from polyrag.service import Assistant
 
 if TYPE_CHECKING:
@@ -22,7 +26,7 @@ if TYPE_CHECKING:
     from polyrag.config import Settings
     from polyrag.domain.ports import LLM, Embedder, Reranker, SqlDatabase, VectorStore
 
-_DERIVED = ("bm25", "retriever", "graph", "assistant")
+_DERIVED = ("bm25", "catalog", "retriever", "graph", "assistant")
 
 
 class Container:
@@ -77,6 +81,10 @@ class Container:
         return BM25Index(load_chunks(self.settings.chunks_path))
 
     @cached_property
+    def catalog(self) -> MeetingCatalog:
+        return MeetingCatalog.from_chunks(self.bm25.chunks)
+
+    @cached_property
     def retriever(self) -> HybridRetriever:
         return HybridRetriever(
             bm25=self.bm25,
@@ -95,6 +103,7 @@ class Container:
             llm=self.llm,
             fast_llm=self.fast_llm,
             settings=self.settings,
+            catalog=self.catalog,
         )
 
     @cached_property
@@ -106,6 +115,20 @@ class Container:
         for name in _DERIVED:  # rebuild the keyword index and graph on next access
             self.__dict__.pop(name, None)
         return report
+
+    async def extract_meeting_records(self, *, force: bool = False) -> tuple[dict[str, int], int]:
+        """Extract decisions, action items and summaries (LLM, cached) into the database.
+        Returns the row counts and the number of meetings that needed a model call."""
+        settings = self.settings
+        transcripts = load_transcripts(
+            settings.corpus_dir / Source.MEETINGS.value, redact=settings.redact_pii
+        )
+        extractor = MeetingExtractor(self.llm, settings.insights_dir)
+        insights, fresh = await extractor.extract_all(transcripts, force=force)
+        counts = write_meeting_records(settings.database_path, transcripts, insights)
+        for name in ("graph", "assistant"):  # the SQL agent caches the schema
+            self.__dict__.pop(name, None)
+        return counts, fresh
 
     def close(self) -> None:
         store = self.__dict__.get("store")
