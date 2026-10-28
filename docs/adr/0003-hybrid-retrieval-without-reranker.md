@@ -31,6 +31,13 @@ The decision is based on `polyrag eval retrieval` (33 labelled questions, 98 chu
 - The cross-encoder costs about 1 s per query and improves no metric on this corpus, so it is
   disabled by default (`POLYRAG_RERANKER_MODEL` re-enables it).
 
+## Update, 2026-10-28: with meeting transcripts
+
+With the 10 meeting transcripts indexed (48 labelled questions, 123 chunks), dense and hybrid
+search are on par (MRR@10 0.923 and 0.918, Recall@5 0.934 and 0.931); hybrid keeps the best
+Hit@1 (0.896). Hybrid remains the default: BM25 is what reliably matches exact identifiers
+(offer codes, amounts, names), for 3 ms more per query. The reranker still improves no metric.
+
 ## Consequences
 
 - The benchmark runs in CI with real embeddings and fails the build if hybrid MRR@10 drops
