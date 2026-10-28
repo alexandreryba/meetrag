@@ -12,7 +12,7 @@ from pydantic import BaseModel
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Sequence
 
-    from polyrag.domain.models import Chunk, ScoredChunk, Source
+    from polyrag.domain.models import Chunk, ScoredChunk, SearchFilter
 
 SchemaT = TypeVar("SchemaT", bound=BaseModel)
 
@@ -79,7 +79,7 @@ class VectorStore(Protocol):
     def upsert(self, chunks: Sequence[Chunk], vectors: Sequence[Sequence[float]]) -> None: ...
 
     def search(
-        self, vector: Sequence[float], *, limit: int, source: Source | None = None
+        self, vector: Sequence[float], *, limit: int, where: SearchFilter | None = None
     ) -> list[ScoredChunk]: ...
 
     def count(self) -> int: ...
