@@ -57,7 +57,7 @@
 <main>
   <header>
     <h1>PolyRAG</h1>
-    <p>Multi-agent assistant over Voltaria Energy's policies, products, support procedures and analytics database.</p>
+    <p>Multi-agent assistant over the engagement's meeting transcripts, Voltaria Energy's documents and its analytics database.</p>
   </header>
 
   <form id="ask">
@@ -82,10 +82,11 @@
 
 <script>
   const EXAMPLES = [
-    "How many days per week can I work remotely?",
+    "What was decided at the last steering committee?",
+    "How did the phase 1 budget evolve since the kick-off?",
+    "Which action items are due in November 2026, and who owns them?",
+    "Quand le go-live a-t-il eu lieu, et pourquoi a-t-il été décalé ?",
     "Which offer has the highest churn rate, and what can a retention agent propose?",
-    "What is the average monthly bill of Voltaria Drive customers, and what wallbox offer do they get?",
-    "What must an agent do when a medically dependent customer reports an outage?",
   ];
   const $ = (id) => document.getElementById(id);
   const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
