@@ -1,4 +1,4 @@
-from polyrag.domain.models import Chunk, ScoredChunk, Source
+from polyrag.domain.models import Chunk, ScoredChunk, SearchFilter, Source
 from polyrag.infrastructure.embeddings import HashingEmbedder
 from polyrag.infrastructure.vectorstores import InMemoryVectorStore
 from polyrag.retrieval.bm25 import BM25Index, tokenize
@@ -33,7 +33,7 @@ def test_tokenize_normalizes_accents_plurals_and_stopwords() -> None:
 def test_bm25_ranks_exact_code_first_and_filters_by_source() -> None:
     index = BM25Index(CHUNKS)
     assert index.search("FIXE3 contract", limit=1)[0].chunk.chunk_id == "a#0"
-    results = index.search("Paris hotel", limit=5, source=Source.PRODUCTS)
+    results = index.search("Paris hotel", limit=5, where=SearchFilter(source=Source.PRODUCTS))
     assert all(r.chunk.source is Source.PRODUCTS for r in results)
 
 
@@ -54,5 +54,5 @@ def test_hybrid_retriever_modes() -> None:
     for mode in (RetrievalMode.BM25, RetrievalMode.DENSE, RetrievalMode.HYBRID):
         hits = retriever.retrieve("renewable hydropower electricity", top_k=2, mode=mode)
         assert hits[0].chunk.chunk_id == "b#0"
-    policy_hits = retriever.retrieve("hotel", top_k=3, source=Source.POLICIES)
+    policy_hits = retriever.retrieve("hotel", top_k=3, where=SearchFilter(source=Source.POLICIES))
     assert {h.chunk.source for h in policy_hits} == {Source.POLICIES}

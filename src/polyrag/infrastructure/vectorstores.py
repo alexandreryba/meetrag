@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from qdrant_client import QdrantClient
 
     from polyrag.config import Settings
-    from polyrag.domain.models import Source
+    from polyrag.domain.models import SearchFilter
 
 _ID_NAMESPACE = uuid.UUID("6f1c2b8e-3d4a-4f5b-9c7d-0e1f2a3b4c5d")
 
@@ -67,19 +67,12 @@ class QdrantVectorStore:
             self._client.upsert(self._collection, points=points[start : start + 256], wait=True)
 
     def search(
-        self, vector: Sequence[float], *, limit: int, source: Source | None = None
+        self, vector: Sequence[float], *, limit: int, where: SearchFilter | None = None
     ) -> list[ScoredChunk]:
-        from qdrant_client.models import FieldCondition, Filter, MatchValue
-
-        query_filter = (
-            Filter(must=[FieldCondition(key="source", match=MatchValue(value=source.value))])
-            if source
-            else None
-        )
         response = self._client.query_points(
             self._collection,
             query=list(vector),
-            query_filter=query_filter,
+            query_filter=_qdrant_filter(where),
             limit=limit,
             with_payload=True,
         )
@@ -95,6 +88,23 @@ class QdrantVectorStore:
 
     def close(self) -> None:
         self._client.close()
+
+
+def _qdrant_filter(where: SearchFilter | None) -> Any:
+    from qdrant_client.models import FieldCondition, Filter, MatchAny, MatchValue
+
+    if where is None:
+        return None
+    must = []
+    if where.source is not None:
+        must.append(FieldCondition(key="source", match=MatchValue(value=where.source.value)))
+    if where.doc_ids is not None:
+        must.append(FieldCondition(key="doc_id", match=MatchAny(any=sorted(where.doc_ids))))
+    if where.speakers is not None:
+        must.append(
+            FieldCondition(key="metadata.speakers", match=MatchAny(any=sorted(where.speakers)))
+        )
+    return Filter(must=must) if must else None
 
 
 class InMemoryVectorStore:
@@ -116,7 +126,7 @@ class InMemoryVectorStore:
         self._matrix = np.vstack([self._matrix, matrix]) if self._matrix.size else matrix
 
     def search(
-        self, vector: Sequence[float], *, limit: int, source: Source | None = None
+        self, vector: Sequence[float], *, limit: int, where: SearchFilter | None = None
     ) -> list[ScoredChunk]:
         if not self._chunks:
             return []
@@ -127,7 +137,7 @@ class InMemoryVectorStore:
         results: list[ScoredChunk] = []
         for index in order:
             chunk = self._chunks[int(index)]
-            if source is None or chunk.source == source:
+            if where is None or where.matches(chunk):
                 results.append(ScoredChunk(chunk=chunk, score=float(scores[index])))
                 if len(results) == limit:
                     break
