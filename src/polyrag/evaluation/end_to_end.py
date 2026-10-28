@@ -216,9 +216,12 @@ async def evaluate_end_to_end(
     notes: Sequence[str] = (),
     concurrency: int = 1,
     on_progress: Callable[[ItemResult], None] | None = None,
+    completed: Sequence[ItemResult] = (),
 ) -> EndToEndReport:
-    """Run every question. Keep ``concurrency=1`` when the latency figures matter."""
+    """Run every question not already in ``completed`` (results of an interrupted run).
+    Keep ``concurrency=1`` when the latency figures matter."""
     semaphore = asyncio.Semaphore(concurrency)
+    done = {record.id: record for record in completed}
 
     async def run(item: GoldenItem) -> ItemResult:
         async with semaphore:
@@ -227,7 +230,9 @@ async def evaluate_end_to_end(
             on_progress(record)
         return record
 
-    records = list(await asyncio.gather(*(run(item) for item in items)))
+    fresh = await asyncio.gather(*(run(item) for item in items if item.id not in done))
+    by_id = {**done, **{record.id: record for record in fresh}}
+    records = [by_id[item.id] for item in items if item.id in by_id]
     grouped: dict[str, list[ItemResult]] = defaultdict(list)
     for record in records:
         grouped[record.category].append(record)
