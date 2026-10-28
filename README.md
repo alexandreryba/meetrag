@@ -1,6 +1,6 @@
 # PolyRAG
 
-**A multi-agent RAG assistant that answers questions across documents _and_ a SQL database, with citations, a groundedness check, and a built-in evaluation harness.**
+**A multi-agent RAG assistant that answers questions across meeting transcripts, documents _and_ a SQL database, with citations, a groundedness check, and a built-in evaluation harness.**
 
 [![CI](https://github.com/alexandreryba/polyrag/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandreryba/polyrag/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
@@ -8,65 +8,80 @@
 ![Lint](https://img.shields.io/badge/lint-ruff-261230)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-> **Measured on a 46-question golden set:** 96.3% answer accuracy, 99.2% faithfulness to the
-> retrieved evidence, 100% routing recall and 100% abstention on out-of-scope questions, with
-> 0 errors ([details](#end-to-end-llm-as-judge)).
+> **Measured on a 67-question golden set:** 96.7% answer accuracy, 97.8% faithfulness to
+> the retrieved evidence, 100% routing recall and 100% abstention on out-of-scope
+> questions; meeting records extracted with 100% precision and recall on 25 annotated action
+> items ([details](#evaluation)).
 
-Most RAG demos stop at "embed PDFs, retrieve top-k, prompt an LLM". Real enterprise questions
-are messier: *"Which offer churns the most, and what can a retention agent propose to those
-customers?"* needs a **SQL query** on business data **and** a **procedure** from the support
-wiki, combined into one answer you can trust.
+On a consulting engagement, most of the knowledge is spoken. The budget approved by the CFO,
+the data source dropped during a workshop, the deadline promised in a weekly sync: all of it
+lives in hours of meeting transcripts, and the answer to a real question usually also needs
+the client's documentation or data. *"What was decided at the last steering committee?"*,
+*"Why did we drop hourly meter data?"*, *"Which actions are due in November, and who owns
+them?"*: finding the answer means re-reading recordings.
 
-PolyRAG routes each question to specialist agents, runs them in parallel, and only returns
-answers whose claims are backed by the retrieved evidence:
+PolyRAG is the assistant I wanted as a data & AI consultant. It routes each question to
+specialist agents, runs them in parallel over **meeting transcripts**, **documents** and a
+**SQL database**, and only returns answers whose claims are backed by the evidence, with the
+speaker, meeting and timestamp of every quote:
 
-- **Multi-agent orchestration with LangGraph**: a router plans the sources and decomposes the
-  question; document agents and a text-to-SQL agent run concurrently (`Send` fan-out); a
-  synthesizer writes a cited answer; a verifier checks every claim and triggers a rewrite.
-- **Multi-source retrieval**: three document collections (HR & security policies, product
-  documentation, support procedures) and an analytics database (customers, consumption, tickets).
+- **Multi-agent orchestration with LangGraph**: a router plans the sources, decomposes the
+  question and sets meeting filters; document agents and a text-to-SQL agent run concurrently
+  (`Send` fan-out); a synthesizer writes a cited answer; a verifier checks every claim and
+  triggers a rewrite.
+- **Meeting transcripts as a first-class source**: plain text, WebVTT (Teams, Zoom, Meet) and
+  SRT; fillers and stutters removed; emails and phone numbers masked; chunks follow speaker
+  turns; French and English.
+- **Who, when, which meeting**: "the last steering committee", "in March", "what did Sophie
+  say" become filters on meeting type, date range and speakers, applied by every retriever.
+- **Meeting records in SQL**: an LLM extracts decisions, action items (owner, task, due date),
+  risks and a summary per meeting into the database, cached by content hash, so "which actions
+  are due in November?" is an exact query.
 - **Hybrid search**: BM25 + dense embeddings (BGE, ONNX on CPU) fused with Reciprocal Rank
-  Fusion, stored in **Qdrant**; optional cross-encoder reranking.
-- **Corrective RAG**: an LLM grader filters retrieved passages and rewrites the query when the
-  evidence is insufficient.
+  Fusion, stored in **Qdrant**; corrective RAG with an LLM grader that rewrites the query when
+  the evidence is insufficient.
 - **Guarded text-to-SQL**: `sqlglot` validation (single read-only `SELECT`, enforced `LIMIT`),
   read-only connection with an authorizer, timeouts, and self-correction from SQL errors.
 - **Abstention**: out-of-scope questions get an explicit "not found" instead of a hallucination.
-- **Evaluation built in**: a 46-question golden set, offline retrieval benchmark used as a **CI
-  quality gate**, and an end-to-end LLM-as-judge evaluation (accuracy, faithfulness, routing,
-  abstention, latency, cost).
+- **Evaluation built in**: a 67-question golden set, an offline retrieval benchmark used as a
+  **CI quality gate**, an extraction benchmark against hand-annotated meeting records, and an
+  end-to-end LLM-as-judge evaluation (accuracy, faithfulness, routing, abstention, latency, cost)
+  that can resume after an interruption.
 - **Production-ready service**: FastAPI with Server-Sent Events streaming, a demo UI, Docker
   image with the index baked in, Terraform for **Cloud Run** (Secret Manager, Workload Identity
   Federation), GitHub Actions CI/CD.
 
-> The knowledge base belongs to **Voltaria Energy**, a fictional French electricity retailer
-> created for this project (16 documents and a 40,000-row SQLite database generated with a
-> fixed seed). Point `POLYRAG_CORPUS_DIR` at your own folders to use your documents.
+> **The data is fictional, on purpose.** The demo is a consulting engagement at Voltaria Energy,
+> an invented French electricity retailer: 10 meeting transcripts (5 in French, 5 in English),
+> 16 internal documents and a 40,000-row database generated with a fixed seed. A synthetic
+> dataset makes the right answer to every evaluation question known, which is what allows the
+> system to be measured, and keeps any real client data out of a public repository. Point
+> `POLYRAG_CORPUS_DIR` at your own folders to use your material ([data/README.md](data/README.md)).
 
 ---
 
 ## Use cases
 
 PolyRAG targets one pattern that plain RAG handles badly: **questions whose answer is spread
-across written knowledge and business data**, asked by people who need a sourced answer they
-can act on. In the demo company:
+across what was said in meetings, what is written in documents and what is in the data**.
 
 | Who asks | Example question | Sources used |
 |---|---|---|
-| Customer-support agent, during a call | "A customer with 6 years of tenure wants to leave because of the price: what can I offer?" | support procedures |
-| Support team lead | "How many billing tickets are open, and what is our resolution target?" | SQL + support procedures |
-| Product or marketing manager | "What is the average monthly bill of Drive customers, and which wallbox offer do they get?" | SQL + product documentation |
-| Any employee (HR, IT self-service) | "Can I paste customer data into a public AI chatbot?" | internal policies |
-| Manager or analyst | "Which offer has the highest churn rate?" | SQL |
+| Engagement manager, preparing a steering committee | "What was decided at the last steering committee?" | meetings (filtered on the latest one) |
+| Consultant joining mid-project | "Why did the team decide not to use hourly smart meter data?" | meetings |
+| PMO | "Which action items are due in November, and who owns them?" | SQL (extracted records) |
+| Client sponsor | "How did the phase 1 budget evolve since the kick-off?" | meetings, across several meetings |
+| Business owner | "The pilot's save rate was compared with a target: what does the retention playbook set, and was it met?" | meetings + documents |
+| Analyst | "Which offer did the pilot target, and what is its churn rate in the database?" | meetings + SQL |
 
 What it deliberately does not do: open-ended chat, general-knowledge answers (out-of-scope
 questions get an explicit "not found"), or any write action on documents or data.
 
-The same architecture transposes to any organisation that has procedures on one side and a
-database on the other: insurance (claims procedures and the claims database), banking (product
-terms and account data), IT service desks (runbooks and incident tickets), public services
-(regulations and case files). Adapting it means replacing the three corpus folders and pointing
-the `SqlDatabase` port at the real warehouse, typically through a read-only replica.
+The same architecture fits any organisation where decisions are made in meetings and must be
+checked against documents and data: consulting and project teams, product teams (roadmap
+reviews), IT service desks (incident reviews and runbooks), public services (committees and
+regulations). Adapting it means replacing the corpus folders and pointing the `SqlDatabase`
+port at the real warehouse, typically through a read-only replica.
 
 ---
 
@@ -74,35 +89,31 @@ the `SqlDatabase` port at the real warehouse, typically through a read-only repl
 
 ```mermaid
 flowchart LR
-    Q([Question]) --> R["Router agent<br/><i>structured plan</i>"]
-    R -- "Send (parallel)" --> D1["Policies agent"]
-    R -- "Send (parallel)" --> D2["Products agent"]
-    R -- "Send (parallel)" --> D3["Support agent"]
+    Q([Question]) --> R["Router agent<br/><i>sources, sub-queries,<br/>meeting filters</i>"]
+    R -- "Send (parallel)" --> M["Meetings agent"]
+    R -- "Send (parallel)" --> D["Policies / Products /<br/>Support agents"]
     R -- "Send (parallel)" --> SQL["SQL agent"]
     R -- "out of scope" --> SY
-    D1 & D2 & D3 & SQL --> SY["Synthesizer<br/><i>cited answer, streamed</i>"]
+    M & D & SQL --> SY["Synthesizer<br/><i>cited answer, streamed</i>"]
     SY --> V{"Verifier<br/><i>claims grounded?</i>"}
     V -- "unsupported claims" --> SY
     V -- "grounded" --> A([Answer + citations + trace])
 ```
 
-Each specialist agent is a small loop of its own:
+Ingestion turns transcripts into both retrievable passages and structured records:
 
 ```mermaid
 flowchart LR
-    subgraph Document agent
-      direction LR
-      q1[query] --> H["Hybrid search<br/>BM25 + dense, RRF"] --> G{"LLM grader<br/>relevant? sufficient?"}
-      G -- "insufficient" --> RW[rewrite query] --> H
-      G -- "sufficient" --> E1[evidence]
-    end
-    subgraph SQL agent
-      direction LR
-      q2[question + schema] --> GEN[generate SELECT] --> GUARD{"sqlglot guard<br/>+ read-only exec"}
-      GUARD -- "error" --> GEN
-      GUARD -- "rows" --> E2[evidence]
-    end
+    T["Transcripts<br/>.txt .md .vtt .srt"] --> P["Parse turns<br/>+ metadata"] --> C["Clean, mask<br/>emails / phones"]
+    C --> K["Chunk by speaker turns<br/>date, type, speakers"] --> I[("Qdrant + BM25")]
+    C --> X["LLM extraction<br/>(cached by hash)"] --> S[("SQL: meetings, participants,<br/>decisions, action_items, risks")]
+    W["Documents<br/>.md .html .pdf"] --> H["Heading-aware<br/>chunking"] --> I
 ```
+
+Each specialist agent is a small loop of its own: the document agents retrieve with hybrid
+search, let an LLM grader keep the relevant passages and rewrite the query when they are
+insufficient; the SQL agent generates a `SELECT`, which the guardrails validate and execute
+read-only, and corrects it from the error message when it fails.
 
 The code follows a **ports & adapters** layout: the agents depend on small interfaces (`LLM`,
 `Embedder`, `VectorStore`, `SqlDatabase`, `Reranker`), and the composition root wires the
@@ -111,97 +122,118 @@ whole graph runs in tests with in-memory fakes and a scripted LLM, without netwo
 
 | Layer | Package | Content |
 |---|---|---|
-| Domain | `polyrag.domain` | Pydantic models (`Chunk`, `Evidence`, `AnswerResult`...) and ports |
+| Domain | `polyrag.domain` | Pydantic models (`Chunk`, `SearchFilter`, `MeetingFilter`, `AnswerResult`...) and ports |
 | Agents | `polyrag.agents` | Router, document agent, SQL agent, synthesizer, verifier, LangGraph wiring |
-| Retrieval | `polyrag.retrieval` | BM25, RRF fusion, hybrid retriever |
-| Ingestion | `polyrag.ingestion` | Loaders (Markdown, HTML, PDF), heading-aware chunker, pipeline |
-| Infrastructure | `polyrag.infrastructure` | Claude (Anthropic SDK, Vertex AI), LangChain adapter, FastEmbed, Qdrant, SQLite |
-| Evaluation | `polyrag.evaluation` | Golden set, retrieval metrics, LLM-as-judge |
+| Retrieval | `polyrag.retrieval` | BM25, RRF fusion, hybrid retriever, meeting catalog |
+| Ingestion | `polyrag.ingestion` | Document loaders and chunker; transcript parser, cleaner and turn chunker; meeting-record extraction |
+| Infrastructure | `polyrag.infrastructure` | Claude (Anthropic SDK, Vertex AI, Claude Code), LangChain adapter, FastEmbed, Qdrant, SQLite |
+| Evaluation | `polyrag.evaluation` | Golden set, retrieval metrics, extraction scoring, LLM-as-judge |
 | Interfaces | `polyrag.api`, `polyrag.cli` | FastAPI + SSE + demo UI, Typer CLI |
 
-Design decisions are recorded as [ADRs](docs/adr/).
+Design decisions are recorded as [ADRs](docs/adr/), including the
+[meeting transcripts design](docs/adr/0006-meeting-transcripts.md).
 
 ---
 
 ## Evaluation
 
-### Retrieval (offline, runs in CI)
-
-`polyrag eval retrieval`, on the 33 golden-set questions that have labelled source documents
-(98 chunks, global search across all collections). The CI fails if hybrid MRR@10 drops below 0.90.
-
-| Mode | Hit@1 | Hit@3 | Recall@5 | MRR@10 | nDCG@5 | Latency |
-|---|---|---|---|---|---|---|
-| BM25 | 0.879 | 0.970 | 0.970 | 0.923 | 0.930 | 0.1 ms |
-| Dense (bge-small-en-v1.5) | **0.970** | 1.000 | 0.985 | **0.985** | **0.969** | 14 ms |
-| **Hybrid (BM25 + dense, RRF)** | 0.939 | 0.970 | **1.000** | 0.961 | 0.960 | 13 ms |
-| Hybrid + cross-encoder rerank | 0.909 | 1.000 | 0.985 | 0.949 | 0.951 | 1,057 ms |
-
-What the numbers say, and what was decided:
-
-- **Hybrid search is the default** because it is the only mode with perfect Recall@5. Agents
-  receive the top 5 passages and an LLM grader filters them, so recall matters more than the
-  rank of the first hit.
-- **The cross-encoder is off by default.** On this corpus it adds about 1 s per query on CPU and
-  does not improve any metric. It remains one setting away (`POLYRAG_RERANKER_MODEL`) for larger
-  or noisier corpora. See [ADR 0003](docs/adr/0003-hybrid-retrieval-without-reranker.md).
-- The corpus is small and clean, so all modes score high; the benchmark is mainly a regression
-  gate for chunking and embedding changes.
-
-Full report: [reports/retrieval.md](reports/retrieval.md).
-
 ### End-to-end (LLM-as-judge)
 
-`polyrag eval e2e` runs the full graph on the 46 questions (policies, products, support,
-analytics, multi-source and out-of-scope), then grades each answer with an LLM judge. For
-analytics questions the judge compares against the **result of a reference SQL query executed
-at evaluation time**, so reference figures are exact.
-
-Results (Claude Opus 5.5 for every role, run on 2026-10-23):
+`polyrag eval e2e` runs the full graph on the 67 questions, then grades each answer with an
+LLM judge. For SQL questions the judge compares against the **result of a reference query
+executed at evaluation time**, so reference figures are exact. Results (Claude Opus 5.5 for every role, run on 2026-10-28):
 
 | Metric | Result | How it is measured |
 |---|---|---|
-| Answer accuracy | **96.3%** | Judge grades each answer against the reference: correct = 1, partial = 0.5 |
-| Strict accuracy | **92.7%** | Fully correct answers: 38 of the 41 answerable questions, the other 3 are partial |
-| Faithfulness | **99.2%** | Share of the answer's atomic claims supported by the retrieved evidence |
-| Routing recall / precision | **100% / 97.6%** | Sources chosen by the router vs. expected sources |
-| Abstention on out-of-scope questions | **100%** (5 / 5) | Explicit "not found" instead of an invented answer |
+| Answer accuracy | **96.7%** | Judge grades each answer against the reference: correct = 1, partial = 0.5 |
+| Strict accuracy | **93.3%** | Fully correct answers: 56 of the 60 answerable questions, the other 4 are partial, none is wrong |
+| Faithfulness | **97.8%** | Share of the answer's atomic claims supported by the retrieved evidence |
+| Routing recall / precision | **100% / 90.8%** | Sources chosen by the router vs. expected sources (extra sources lower precision) |
+| Abstention on out-of-scope questions | **100%** (7 / 7) | Explicit "not found" instead of an invented answer |
 | False abstention | **0%** | Answerable questions wrongly declined |
-| LLM calls per question | 4.0 | Router, graders, SQL agent, synthesizer, verifier |
-| API-equivalent cost per question | $0.054 | Token usage × list price (judge excluded) |
-| Latency p50 / p95 | 21 s / 27 s | See the note below |
+| LLM calls per question | 4.3 | Router, graders, SQL agent, synthesizer, verifier |
+| API-equivalent cost per question | $0.082 | Token usage × list price (judge excluded) |
+| Latency p50 / p95 | 21 s / 36 s | See the note below |
 | Errors | 0 | |
 
 | Category | Questions | Accuracy | Faithfulness |
 |---|---|---|---|
-| Policies | 10 | 100% | 99.1% |
-| Products | 9 | 100% | 100% |
-| Support | 8 | 100% | 100% |
-| Analytics (SQL) | 8 | 93.8% | 96.9% |
-| Multi-source (SQL + documents) | 6 | 83.3% | 100% |
-| Out of scope | 5 | 100% abstention | - |
+| **Meetings** (single meeting, across meetings, who said what, French question) | 12 | **100%** | 100% |
+| **Meeting records** (action items, steering committees, attendance, via SQL) | 4 | **100%** | 96.4% |
+| Policies | 10 | 95.0% | 97.7% |
+| Products | 9 | 100% | 98.1% |
+| Support | 8 | 100% | 97.6% |
+| Analytics (SQL on business data) | 8 | 87.5% | 93.3% |
+| Multi-source (meetings, documents and SQL combined) | 9 | 94.4% | 99.3% |
+| Out of scope | 7 | 100% abstention | - |
 
-**Error analysis.** The three answers graded "partial" were checked by hand:
+**Error analysis.** The four answers graded "partial", checked by hand:
 
-- *ana-07, mul-05* ("average monthly consumption / bill of Drive customers"): the SQL agent
-  averaged each customer's monthly average, while the reference averages all customer-months.
-  Its figures are exact for that reading (482.97 kWh and €100.13); the question is ambiguous. A
-  metric glossary (semantic layer) given to the SQL agent would remove this class of error.
-- *mul-01* (churn + retention offers): the "Loyalty gestures" section of the retention playbook
-  was not in the top 5 passages for the router's sub-query, so the answer omits it. Expanding
-  retrieved chunks to their sibling sections would fix it.
+- *ana-07, mul-05* ("average monthly consumption / bill of Drive customers"): the reference
+  averages all customer-months, while the SQL agent averaged each customer's monthly average
+  (482.97 kWh, exact for that reading) or, in mul-05, declined to give a single figure. The
+  question is ambiguous; a metric glossary (semantic layer) given to the SQL agent would remove
+  this class of error. The same two questions were partial in the first run.
+- *ana-08* (average resolution time of billing tickets closed in 2026): 6.84 days against
+  6.80, from a slightly different filter.
+- *pol-01* (remote days per week): the answer gives the right figure but omits the eligibility
+  condition (after the probation period), which it cited in the previous run: the LLM grader
+  kept a different set of passages. Expanding retrieved chunks to their sibling sections would
+  make this more stable.
 
-The two claims counted as unfaithful restate the question itself ("the wine is worth €120"),
-which the judge did not find in the evidence.
+The prompts were not tuned on these questions: a rule written to fix ana-07 and mul-05 was
+removed again so that the figures stay honest.
 
 **Reading these numbers.** The run went through the Claude Code CLI on a Claude subscription
 (`claude-code` provider): latency includes the CLI start-up of each of the ~4 sequential calls,
 so it overstates what the API gives. The judge is the same model as the system, which can
-favour its own style; `POLYRAG_JUDGE_MODEL` lets you use another one. Prompts were not tuned on
-these questions after the run.
+favour its own style; `POLYRAG_JUDGE_MODEL` lets you use another one. The dataset is small and
+clean; the difficulty lies in routing, cross-source and cross-meeting questions, attribution
+and abstention, which is what the golden set targets. Full report: [reports/e2e.md](reports/e2e.md).
 
-Full report: [reports/e2e.md](reports/e2e.md). Re-run it with `polyrag eval e2e`, or from the
-**End-to-end evaluation** GitHub workflow.
+### Meeting-record extraction (offline)
+
+`polyrag eval extraction` compares the cached LLM extractions with hand-annotated records of
+the 10 meetings ([eval/meeting_records_gold.jsonl](eval/meeting_records_gold.jsonl)). An action
+item matches when the owner is the same person and the tasks are paraphrases (embedding cosine
+similarity of at least 0.70; true matches score 0.78 or more, median 0.92, while the closest
+wrong pair scores 0.73).
+
+| Metric | Result |
+|---|---|
+| Action items: precision / recall | **100% / 100%** (25 / 25) |
+| Due dates correct on matched items | 96% (24 / 25) |
+| Decisions found | 100% (16 / 16 annotated; 21 extracted) |
+
+The one date mismatch is debatable: for "staff six agents for the go-live week", the model
+resolved the date to the go-live day decided in the same meeting, where the annotation leaves
+it empty. The annotation was not changed after seeing the result. Report:
+[reports/extraction.md](reports/extraction.md).
+
+### Retrieval (offline, runs in CI)
+
+`polyrag eval retrieval`, on the 48 golden-set questions that have labelled source documents
+(123 chunks, global search across all sources). The CI fails if hybrid MRR@10 drops below 0.90.
+
+| Mode | Hit@1 | Hit@5 | Recall@5 | MRR@10 | nDCG@5 | Latency |
+|---|---|---|---|---|---|---|
+| BM25 | 0.833 | 0.917 | 0.899 | 0.875 | 0.860 | 0.1 ms |
+| Dense (bge-small-en-v1.5) | 0.875 | **0.979** | **0.934** | **0.923** | 0.896 | 12 ms |
+| **Hybrid (BM25 + dense, RRF)** | **0.896** | 0.958 | 0.931 | 0.918 | 0.896 | 15 ms |
+| Hybrid + cross-encoder rerank | 0.854 | 0.958 | 0.913 | 0.906 | 0.880 | 1 to 15 s |
+
+What the numbers say, and what was decided:
+
+- **Dense and hybrid are on par** on this benchmark. Hybrid stays the default because BM25 is
+  what reliably matches exact identifiers (offer codes, amounts, tool and people names), for
+  3 ms more; it also has the best Hit@1.
+- **The cross-encoder is off by default**: it improves no metric and costs at least a second
+  per query on CPU ([ADR 0003](docs/adr/0003-hybrid-retrieval-without-reranker.md)).
+- **The embedding model was chosen by measurement**: two multilingual models did worse than
+  `bge-small-en-v1.5`, including on the French meetings ([ADR 0006](docs/adr/0006-meeting-transcripts.md)).
+- **Indexing the English meeting type in every transcript chunk** raised meeting Recall@5 from
+  0.744 to 0.811: an English question about a "steering committee" now matches a French
+  "Comité de pilotage".
 
 ---
 
@@ -212,13 +244,17 @@ Requirements: Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 ```bash
 git clone https://github.com/alexandreryba/polyrag.git && cd polyrag
 uv sync --all-extras
-cp .env.example .env            # then set ANTHROPIC_API_KEY
+cp .env.example .env            # then set ANTHROPIC_API_KEY (or use your Claude subscription, below)
 
-uv run polyrag ingest           # index 16 documents + build the analytics database (~10 s)
+uv run polyrag ingest           # index transcripts and documents, build the database (~20 s)
 uv run polyrag eval retrieval   # offline benchmark, no API key needed
-uv run polyrag ask "Which offer has the highest churn rate, and what can a retention agent propose?"
+uv run polyrag ask "What was decided at the last steering committee?"
 uv run polyrag serve            # API + demo UI on http://127.0.0.1:8000
 ```
+
+Meeting records (decisions, action items, risks) are already extracted in `data/insights/`.
+After adding or changing transcripts, run `uv run polyrag extract` (one LLM call per new or
+changed meeting; unchanged meetings come from the cache).
 
 With Docker:
 
@@ -239,7 +275,8 @@ The `claude-code` provider drives the Claude Code CLI through the
 [Claude Agent SDK](https://pypi.org/project/claude-agent-sdk/), one tool-free turn per call,
 without loading your Claude Code settings or MCP servers. It is meant for development and
 evaluation on your own machine: subscription access is personal, so the deployed service uses
-the API or Vertex AI. Each call starts a CLI process, which adds about 2 s of latency.
+the API or Vertex AI. Each call starts a CLI process, which adds about 2 s of latency; when the
+subscription's usage limit is reached, an evaluation stops cleanly and `--resume` continues it.
 
 The router, graders, SQL agent and verifier use `POLYRAG_LLM_FAST_MODEL` with low reasoning
 effort; the synthesizer uses `POLYRAG_LLM_MODEL`. Set the fast model to `claude-haiku-5-5` to cut
@@ -261,7 +298,7 @@ if still declined, turned into an abstention rather than an error.
 
 ```bash
 curl -s localhost:8000/v1/ask -H 'Content-Type: application/json' \
-  -d '{"question": "How many P1 tickets were opened in 2026, and what first-response time is required?"}'
+  -d '{"question": "Which action items are due in November 2026, and who owns them?"}'
 ```
 
 Set `POLYRAG_API_KEY` to require an `X-API-Key` header on `/v1/*`.
@@ -273,7 +310,8 @@ Set `POLYRAG_API_KEY` to require an `X-API-Key` header on `/v1/*`.
 `deploy/terraform` provisions Artifact Registry, a Cloud Run service (2 vCPU, 2 GiB, scale to
 zero), Secret Manager secrets, dedicated runtime and deployer service accounts, and **Workload
 Identity Federation** so GitHub Actions deploys without any stored key. The Docker image ships
-with the embedding model and the index, so a cold start downloads nothing.
+with the embedding model, the index and the meeting records, so a cold start downloads
+nothing and calls no model.
 
 Step-by-step guide: [docs/deployment.md](docs/deployment.md).
 
@@ -283,13 +321,15 @@ Step-by-step guide: [docs/deployment.md](docs/deployment.md).
 
 ```bash
 make check            # ruff + mypy --strict + pytest (what CI runs)
-make test             # 68 tests, ~10 s, fully offline
+make test             # 92 tests, ~10 s, fully offline
 uv run pre-commit install
 ```
 
-- **Tests**: unit tests for chunking, BM25, RRF, SQL guardrails, metrics and both Claude adapters;
-  integration tests that run the full LangGraph pipeline, the API, the CLI and both evaluations
-  against the real corpus, with a scripted LLM. Coverage: 83%.
+- **Tests**: unit tests for transcript parsing (all formats), cleaning and PII masking, turn
+  chunking, the meeting catalog and search filters, BM25, RRF, SQL guardrails, meeting records
+  and their cache, metrics and the LLM adapters; integration tests that run the full LangGraph
+  pipeline (including meeting filters), the API, the CLI and the evaluations against the real
+  corpus, with a scripted LLM. Coverage: 82%.
 - **CI** (`.github/workflows/ci.yml`): lint, types and tests on Python 3.11 to 3.13, retrieval
   quality gate with real embeddings, Docker build.
 - **CD** (`deploy.yml`): on a `v*` tag, build, push to Artifact Registry, deploy to Cloud Run,
@@ -302,42 +342,48 @@ src/polyrag/
 ├── api/             FastAPI app, schemas, static demo UI
 ├── demo/            deterministic generator of the analytics database
 ├── domain/          models and ports
-├── evaluation/      golden set, retrieval metrics, LLM judge
+├── evaluation/      golden set, retrieval metrics, extraction scoring, LLM judge
 ├── infrastructure/  LLM, embeddings, reranker, Qdrant, SQLite adapters
-├── ingestion/       loaders, chunker, pipeline
-├── retrieval/       BM25, RRF, hybrid retriever
+├── ingestion/       loaders, chunkers, transcripts, meeting records, pipeline
+├── retrieval/       BM25, RRF, hybrid retriever, meeting catalog
 ├── cli.py           Typer CLI
 ├── config.py        settings (env vars, prefix POLYRAG_)
 ├── container.py     composition root
 └── service.py       application service (ask / stream)
-data/corpus/         Voltaria knowledge base (policies, products, support)
-eval/golden_set.jsonl
+data/corpus/         meetings, policies, products, support
+data/insights/       cached meeting records (decisions, action items, risks)
+eval/                golden set and annotated meeting records
 deploy/terraform/    Cloud Run infrastructure
 docs/adr/            architecture decision records
 ```
 
 ## Roadmap
 
-- Metric glossary (semantic layer) in the SQL agent's context, from the error analysis above.
-- Sibling-section expansion of retrieved chunks, from the same analysis.
+- Permission-aware retrieval: only search the meetings a user attended (participants are
+  already in the chunk metadata).
+- Connectors to Teams, Google Meet and Zoom to ingest transcripts as meetings end, with
+  incremental indexing by content hash.
+- Audio transcription and speaker diarization (Whisper) for recordings without a transcript.
+- Metric glossary (semantic layer) for the SQL agent, and sibling-section expansion of
+  retrieved chunks, from the error analysis.
 - Conversation memory (LangGraph checkpointer) for follow-up questions.
-- BigQuery adapter for the `SqlDatabase` port.
-- Qdrant sparse vectors to move BM25 into the vector database for large corpora.
-- OpenTelemetry tracing of agent steps.
+- BigQuery adapter for the `SqlDatabase` port; OpenTelemetry tracing of agent steps.
 
 ---
 
 ## En bref (FR)
 
-PolyRAG est un **assistant RAG multi-agents** : un agent routeur (LangGraph) choisit les sources,
-des agents spécialisés interrogent en parallèle trois bases documentaires (recherche hybride
-BM25 + vecteurs, Qdrant) et une base SQL (text-to-SQL sécurisé), puis un agent de synthèse
-rédige une réponse sourcée, vérifiée par un agent de contrôle des hallucinations. Sur un jeu de
-46 questions : 96 % de réponses correctes, 99 % de fidélité aux sources, 100 % de questions hors
-périmètre correctement refusées. Le projet
-inclut un jeu d'évaluation de 46 questions, un banc d'essai de la recherche utilisé comme
-**quality gate en CI**, une évaluation de bout en bout par LLM juge, une API FastAPI en
-streaming, une image Docker et un déploiement **Cloud Run** en Terraform.
+PolyRAG est un **assistant RAG multi-agents** pensé pour les équipes qui passent leurs journées
+en réunion : il interroge des **transcripts de réunions** (texte, VTT, SRT, en français ou en
+anglais), des **documents** et une **base SQL**, et cite chaque information avec la personne, la
+réunion et l'horodatage. Un agent routeur (LangGraph) choisit les sources et comprend « le
+dernier comité de pilotage » ou « ce qu'a dit Sophie en mars » ; des agents spécialisés
+cherchent en parallèle (recherche hybride BM25 + vecteurs, Qdrant ; text-to-SQL sécurisé) ; un
+agent de synthèse rédige la réponse, vérifiée par un agent de contrôle des hallucinations. Les
+décisions et actions de chaque réunion sont extraites en base SQL. Sur 67 questions : 97 %
+de réponses correctes, 98 % de fidélité aux sources, 100 % de questions hors
+périmètre refusées ; extraction des actions : 100 % de précision et de rappel. Le projet
+inclut CI avec quality gate, API FastAPI en streaming, Docker et Terraform pour Cloud Run.
 
 ## License
 
