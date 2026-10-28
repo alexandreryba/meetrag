@@ -31,7 +31,7 @@ ROUTING_RULES: list[tuple[str, Source]] = [
 
 
 def scripted_router(prompt: str) -> RoutePlan:
-    question = prompt.removeprefix("Question: ")
+    question = prompt.split("Question: ", 1)[-1]
     steps = [
         RouteStep(source=source, query=question)
         for pattern, source in ROUTING_RULES
