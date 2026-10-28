@@ -1,0 +1,42 @@
+WEBVTT
+
+NOTE
+title: Go-live readiness review
+type: review
+language: en
+participants:
+- Thomas Girard | Data Platform Lead | Voltaria
+- Claire Dubois | Head of Customer Operations | Voltaria
+- Nadia Benali | Retention Product Owner | Voltaria
+- Hugo Lambert | Engagement Manager | Consulting team
+- Léa Moreau | Data Engineer | Consulting team
+
+00:00:04.000 --> 00:00:14.000
+<v Hugo Lambert>This is the readiness review for the go-live planned on September 15th. Thomas, where do we stand?</v>
+
+00:00:15.000 --> 00:00:38.000
+<v Thomas Girard>Bad news first: the load test of the campaign tool failed yesterday. At 14,000 customers in scope, the tool times out when it generates the call lists.</v>
+
+00:00:39.000 --> 00:00:54.000
+<v Léa Moreau>The scoring pipeline itself is fine, it scores the full Essentielle base in under ten minutes. The bottleneck is only the campaign tool.</v>
+
+00:00:55.000 --> 00:01:10.000
+<v Thomas Girard>The vendor has a fix, but I need a few days to apply it and rerun the load test.</v>
+
+00:01:11.000 --> 00:01:28.000
+<v Claire Dubois>I'd rather postpone than go live with a tool that breaks in front of the agents.</v>
+
+00:01:29.000 --> 00:01:45.000
+<v Hugo Lambert>Agreed. So we postpone the go-live by one week, to September 22nd, because of the failed load test.</v>
+
+00:01:46.000 --> 00:01:58.000
+<v Nadia Benali>Fine for the business. I'll inform the retention team today.</v>
+
+00:01:59.000 --> 00:02:12.000
+<v Thomas Girard>I'll rerun the load test with the fix by September 18th.</v>
+
+00:02:13.000 --> 00:02:30.000
+<v Claire Dubois>And I'll staff six additional retention agents for the go-live week.</v>
+
+00:02:31.000 --> 00:02:41.000
+<v Hugo Lambert>Thanks. Next checkpoint on the 18th after the load test.</v>

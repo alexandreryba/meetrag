@@ -1,0 +1,36 @@
+{
+  "meeting_id": "2026-07-07-steering-committee-2",
+  "transcript_sha256": "34eb84a351fd69d6fe4e70fe20e05744f1ad65f7afecca06b77e5c713d3bbd03",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:21+00:00",
+  "insights": {
+    "summary": "The second steering committee reviewed the retention pilot results and decided whether to go live. After three weeks, the save rate on contacted customers was 31% against a 25% target. Churn was 1.9% in the test group versus 3.4% in the control group, and each saved customer cost about 38 euros, mostly the free month of subscription. The CFO said this cost was well below the cost of acquiring a new customer. Because of the IT summer production freeze, the committee approved going live for all Essentielle customers on September 15th, and Customer Operations raised a concern about agent staffing during August.",
+    "decisions": [
+      {
+        "decision": "Go live for all Essentielle customers on September 15th (2026-09-15).",
+        "decided_by": "Sophie Bernard"
+      },
+      {
+        "decision": "Approved the September 15th go-live while respecting the summer production freeze from July 25th to August 20th.",
+        "decided_by": "Marc Lefèvre"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Thomas Girard",
+        "task": "Prepare the production deployment plan.",
+        "due_date": "2026-08-28"
+      },
+      {
+        "owner": "Hugo Lambert",
+        "task": "Prepare the go-live communication plan for the agents and management.",
+        "due_date": "2026-09-01"
+      }
+    ],
+    "risks": [
+      "Staffing: many agents are on holiday in August, so the ramp-up before go-live will be tight (raised by Claire Dubois).",
+      "No production changes are allowed during the summer freeze (July 25th to August 20th), which delays industrialisation of the pilot."
+    ]
+  }
+}
