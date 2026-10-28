@@ -1,0 +1,43 @@
+{
+  "meeting_id": "2026-03-16-data-discovery-workshop",
+  "transcript_sha256": "a7ebe1492db3983c16f4d6c616c71905a9d145b5dbe2942566cc16ccb3ec6904",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:04+00:00",
+  "insights": {
+    "summary": "The workshop listed the data sources for the churn model and set the scope of its first version. Thomas Girard named four sources: the CRM (customer and contract data), the billing system, the support ticketing tool, and smart meter data from the distribution network operator. Léa Moreau's first profiling of the CRM found about 8% of customers with no region, mostly old contracts migrated in 2021, and about 1% duplicates. Only 41% of customers have consented to sharing hourly smart meter data, and the retention team needs a score for every Essentielle customer. For these reasons, the first model will use monthly billing and consumption data plus support tickets, and hourly data is kept for a later version. Nadia Benali pointed out that support calls spike after price increase notifications on indexed offers, so the date of the last price notification will be added as a feature.",
+    "decisions": [
+      {
+        "decision": "The first churn model will use monthly billing data, not hourly smart meter data.",
+        "decided_by": "Thomas Girard"
+      },
+      {
+        "decision": "The first model version will be built on monthly billing and consumption data plus support tickets. Hourly smart meter data is kept for a later version.",
+        "decided_by": "Thomas Girard"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Karim Haddad",
+        "task": "Draft the full feature list for the churn model, including the date of the last price notification as a feature.",
+        "due_date": "2026-03-23"
+      },
+      {
+        "owner": "Léa Moreau",
+        "task": "Deliver a complete data quality report on the CRM, with the missing regions and duplicates quantified.",
+        "due_date": "2026-03-27"
+      },
+      {
+        "owner": "Thomas Girard",
+        "task": "Ask the distribution network operator for an extract of hourly smart meter data for consenting customers, so it can be tested later.",
+        "due_date": null
+      }
+    ],
+    "risks": [
+      "Low consent rate on hourly smart meter data (41% of customers): using it would bias the model towards a small part of the customer base.",
+      "CRM data quality: about 8% of customers have no region (mostly old contracts migrated in 2021), and about 1% of records are duplicates.",
+      "Billing history is limited because it only starts in January 2025.",
+      "The timing of the hourly data extract depends on the distribution network operator, and no date has been set."
+    ]
+  }
+}

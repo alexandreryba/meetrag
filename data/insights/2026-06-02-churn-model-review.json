@@ -1,0 +1,35 @@
+{
+  "meeting_id": "2026-06-02-churn-model-review",
+  "transcript_sha256": "a2779d4a600956ac65364c2505df18e043e470b0b77d0af769c0bbc3cb4b14be",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:15+00:00",
+  "insights": {
+    "summary": "The team reviewed the final churn model before the pilot. Karim Haddad reported that the gradient boosting model reaches an AUC of 0.82 on the holdout set and is stable across regions. Its four main churn drivers are a price increase notified in the last three months, billing tickets in the last six months, tenure under one year, and having no smart meter. For the pilot, the plan is to target the top 10% risk decile, which has a precision of 0.46, and the retention team can call about 2,000 customers. The participants agreed to use the billing ticket feature and to retrain the model monthly. Owners and deadlines were set for the retraining pipeline and the model card.",
+    "decisions": [
+      {
+        "decision": "The billing ticket count may be used as a model feature.",
+        "decided_by": "Claire Dubois"
+      },
+      {
+        "decision": "The churn model will be retrained every month.",
+        "decided_by": "Karim Haddad"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Léa Moreau",
+        "task": "Schedule the monthly retraining pipeline in Cloud Run jobs.",
+        "due_date": "2026-06-19"
+      },
+      {
+        "owner": "Karim Haddad",
+        "task": "Write the model card, covering data, metrics, limits and fairness checks.",
+        "due_date": "2026-06-12"
+      }
+    ],
+    "risks": [
+      "If price increases change in autumn, the model may drift, so it needs to be monitored."
+    ]
+  }
+}

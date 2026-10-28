@@ -1,0 +1,36 @@
+{
+  "meeting_id": "2026-04-21-architecture-review",
+  "transcript_sha256": "77742ef50be58171386ed68a65afcf7b2a20484723eea33213ac89c1302508a6",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:08+00:00",
+  "insights": {
+    "summary": "The consulting team presented the target architecture for Voltaria's data platform. It is a medallion architecture on BigQuery with bronze, silver and gold layers, and the transformations are written in dbt. Cloud Composer was rejected as oversized and too expensive for the data volume. Instead, dbt Core will run in Cloud Run jobs triggered by Cloud Scheduler. Restricted customer data will be pseudonymized from the silver layer onward, and names, emails and phone numbers will never reach the gold layer. Marc Lefèvre approved the architecture on the condition that the CISO (RSSI) approves the pseudonymization approach. Streaming of meter data was moved to phase 2.",
+    "decisions": [
+      {
+        "decision": "Approved the medallion architecture on BigQuery with dbt Core running on Cloud Run, on the condition that the CISO (RSSI) approves the pseudonymization approach.",
+        "decided_by": "Marc Lefèvre"
+      },
+      {
+        "decision": "Streaming of meter data is postponed to phase 2.",
+        "decided_by": "Marc Lefèvre"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Marc Lefèvre",
+        "task": "Get the CISO (RSSI) to approve the pseudonymization approach for Restricted data.",
+        "due_date": "2026-04-30"
+      },
+      {
+        "owner": "Léa Moreau",
+        "task": "Set up the dbt project with its CI.",
+        "due_date": "2026-05-05"
+      }
+    ],
+    "risks": [
+      "A delay in the CISO's (RSSI) review of the pseudonymization approach would block the production launch.",
+      "Restricted customer data (personal data) must be properly pseudonymized to comply with the company security policy."
+    ]
+  }
+}
