@@ -12,7 +12,16 @@ from polyrag.domain.models import Source
 if TYPE_CHECKING:
     from pathlib import Path
 
-Category = Literal["policies", "products", "support", "analytics", "multi_source", "out_of_scope"]
+Category = Literal[
+    "policies",
+    "products",
+    "support",
+    "analytics",
+    "meetings",
+    "meeting_records",
+    "multi_source",
+    "out_of_scope",
+]
 
 
 class GoldenItem(BaseModel):

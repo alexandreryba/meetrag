@@ -1,0 +1,16 @@
+{
+  "meetings": 10,
+  "threshold": 0.7,
+  "gold_action_items": 25,
+  "extracted_action_items": 25,
+  "matched_action_items": 25,
+  "action_precision": 1.0,
+  "action_recall": 1.0,
+  "action_f1": 1.0,
+  "due_date_accuracy": 0.96,
+  "gold_decisions": 16,
+  "extracted_decisions": 21,
+  "decision_recall": 1.0,
+  "missed": [],
+  "unexpected": []
+}
