@@ -1,0 +1,34 @@
+{
+  "meeting_id": "2026-04-07-weekly-sync-1",
+  "transcript_sha256": "7d3ec25b853d9e46e9dd7b16aa6b05c0d04da10e226e1420e3fdc5df090552f8",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:02+00:00",
+  "insights": {
+    "summary": "The team went over progress and blockers. Léa Moreau said BigQuery sandbox access was granted on March 11th, two days late because the security review took longer. Her data quality report is finished: 8.4% of customers have no region and 1.2% are duplicates. Karim Haddad presented a baseline logistic regression on monthly billing, tenure and ticket counts, with an AUC of 0.74 on the validation set, and plans to try gradient boosting next. Thomas Girard raised a staffing blocker on the production side, and Hugo Lambert decided to schedule production work for June.",
+    "decisions": [
+      {
+        "decision": "Production work will be scheduled for June.",
+        "decided_by": "Hugo Lambert"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Karim Haddad",
+        "task": "Try gradient boosting for the churn model and report results.",
+        "due_date": "2026-04-17"
+      },
+      {
+        "owner": "Léa Moreau",
+        "task": "Deduplicate customer records in staging so duplicates do not leak into the training set.",
+        "due_date": "2026-04-14"
+      }
+    ],
+    "risks": [
+      "Thomas Girard's team has only one engineer available until May, so production-side work will be slow.",
+      "Duplicate customer records (1.2%) could leak into the training set unless they are removed from staging first.",
+      "8.4% of customers have no region in the data.",
+      "BigQuery sandbox access came two days late because the security review took longer."
+    ]
+  }
+}

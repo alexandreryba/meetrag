@@ -1,0 +1,9 @@
+Hugo Lambert (00:00:04) : Bonjour, point hebdo rapide. Nadia, le pilote ?
+Nadia Benali (00:00:10) : Le pilote est lancé depuis le 15 juin sur 2 000 clients Essentielle : 1 000 dans le groupe test qui reçoivent l'appel de rétention, et 1 000 dans un groupe témoin.
+Nadia Benali (00:00:28) : C'est encore trop tôt pour les résultats, mais les conseillers trouvent le script clair.
+Léa Moreau (00:00:37) : De mon côté, le pipeline de réentraînement mensuel est en place dans Cloud Run, il a tourné une première fois sans erreur.
+Claire Dubois (00:00:49) : Un problème quand même : euh environ 3 % des numéros de téléphone du CRM sont invalides, donc on n'arrive pas à joindre certains clients du groupe test.
+Hugo Lambert (00:01:04) : On les garde dans l'analyse mais on le signale comme biais possible. Claire, tu peux briefer les conseillers sur le nouveau script ?
+Claire Dubois (00:01:13) : Oui, je briefe les conseillers rétention d'ici le 26 juin.
+Nadia Benali (00:01:20) : Et je vous envoie un reporting des indicateurs du pilote chaque lundi.
+Hugo Lambert (00:01:28) : Parfait, merci à tous.

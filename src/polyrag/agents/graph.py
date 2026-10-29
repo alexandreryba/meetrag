@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from polyrag.config import Settings
     from polyrag.domain.ports import LLM, SqlDatabase
     from polyrag.retrieval.hybrid import HybridRetriever
+    from polyrag.retrieval.meetings import MeetingCatalog
 
 
 def dispatch(state: GraphState) -> list[Send] | str:
@@ -54,14 +55,16 @@ def build_graph(
     llm: LLM,
     fast_llm: LLM,
     settings: Settings,
+    catalog: MeetingCatalog | None = None,
 ) -> CompiledStateGraph[Any, Any, Any, Any]:
     graph = StateGraph(GraphState)
-    graph.add_node(RouterAgent.name, RouterAgent(fast_llm))
+    graph.add_node(RouterAgent.name, RouterAgent(fast_llm, catalog=catalog))
     graph.add_node(
         DocumentAgent.name,
         DocumentAgent(
             retriever=retriever,
             llm=fast_llm,
+            catalog=catalog,
             top_k=settings.top_k,
             max_rounds=settings.max_retrieval_rounds,
         ),

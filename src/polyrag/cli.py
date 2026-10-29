@@ -15,6 +15,7 @@ from rich.table import Table
 
 from polyrag.config import LLMProvider, get_settings
 from polyrag.container import Container
+from polyrag.domain.models import Source
 from polyrag.domain.ports import LLMUnavailableError
 from polyrag.observability import configure_logging
 
@@ -50,12 +51,34 @@ def ingest() -> None:
         report = container.ingest()
     table = Table(title="Ingestion", show_header=False)
     table.add_row("Documents", str(report.documents))
+    table.add_row("Meeting transcripts", str(report.meetings))
+    table.add_row("  with extracted records", str(report.meetings_with_records))
     table.add_row("Chunks", str(report.chunks))
     for source, count in report.chunks_per_source.items():
         table.add_row(f"  {source}", str(count))
     for name, rows in report.database_rows.items():
         table.add_row(f"Table {name}", f"{rows:,} rows")
     table.add_row("Duration", f"{report.seconds} s")
+    console.print(table)
+
+
+@app.command()
+def extract(
+    force: Annotated[bool, typer.Option(help="Re-extract even when the cache is valid")] = False,
+) -> None:
+    """Extract decisions, action items, risks and summaries from the meeting transcripts."""
+    with open_container() as container:
+        try:
+            with console.status("Extracting meeting records..."):
+                counts, fresh = asyncio.run(container.extract_meeting_records(force=force))
+        except LLMUnavailableError as exc:
+            console.print(f"[red]LLM provider unavailable:[/red] {exc}")
+            raise typer.Exit(code=2) from exc
+    table = Table(title="Meeting records", show_header=False)
+    table.add_row("Meetings", str(counts["meetings"]))
+    table.add_row("  extracted now / from cache", f"{fresh} / {counts['meetings'] - fresh}")
+    for name in ("decisions", "action_items", "risks"):
+        table.add_row(name.replace("_", " ").capitalize(), str(counts[name]))
     console.print(table)
 
 
@@ -124,19 +147,81 @@ def eval_retrieval(
         raise typer.Exit(code=1)
 
 
+@eval_app.command("extraction")
+def eval_extraction(
+    threshold: Annotated[float, typer.Option(help="Minimum task similarity to match")] = 0.7,
+) -> None:
+    """Score the cached meeting records against the hand-annotated gold (no LLM call)."""
+    from polyrag.evaluation.extraction import (
+        embedding_similarity,
+        evaluate_extraction,
+        extraction_markdown,
+        load_gold,
+    )
+    from polyrag.ingestion.meeting_records import load_cached_insights
+    from polyrag.ingestion.transcripts import load_transcripts
+
+    with open_container() as container:
+        settings = container.settings
+        transcripts = load_transcripts(
+            settings.corpus_dir / Source.MEETINGS.value, redact=settings.redact_pii
+        )
+        extracted = load_cached_insights(settings.insights_dir, transcripts)
+        if not extracted:
+            console.print("[red]No extracted records: run `polyrag extract` first.[/red]")
+            raise typer.Exit(code=1)
+        scores = evaluate_extraction(
+            load_gold(settings.extraction_gold),
+            extracted,
+            embedding_similarity(container.embedder.embed_documents),
+            threshold=threshold,
+        )
+    markdown = extraction_markdown(scores, model=settings.llm_model)
+    settings.reports_dir.mkdir(parents=True, exist_ok=True)
+    (settings.reports_dir / "extraction.md").write_text(markdown, encoding="utf-8")
+    (settings.reports_dir / "extraction.json").write_text(
+        scores.model_dump_json(indent=2), encoding="utf-8"
+    )
+    console.print(Markdown(markdown))
+
+
 @eval_app.command("e2e")
 def eval_end_to_end(
     limit: Annotated[int | None, typer.Option(help="Only run the first N questions")] = None,
     category: Annotated[str | None, typer.Option(help="Only run one category")] = None,
     concurrency: Annotated[int, typer.Option(min=1, help="Parallel questions")] = 1,
+    resume: Annotated[
+        bool, typer.Option(help="Skip questions already graded by an interrupted run")
+    ] = False,
 ) -> None:
     """Run the full pipeline on the golden set and grade answers with an LLM judge."""
     from polyrag.evaluation.dataset import load_golden_set
-    from polyrag.evaluation.end_to_end import Judge, end_to_end_markdown, evaluate_end_to_end
+    from polyrag.evaluation.end_to_end import (
+        ItemResult,
+        Judge,
+        end_to_end_markdown,
+        evaluate_end_to_end,
+    )
+
+    settings = get_settings()
+    checkpoint = settings.reports_dir / "e2e.partial.jsonl"
+    completed: list[ItemResult] = []
+    if resume and checkpoint.exists():
+        completed = [
+            ItemResult.model_validate_json(line)
+            for line in checkpoint.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        console.print(f"Resuming: {len(completed)} question(s) already graded.")
+    elif checkpoint.exists():
+        checkpoint.unlink()
 
     def progress(record: ItemResult) -> None:
         status = "[red]error[/red]" if record.error else f"score={record.correctness}"
         console.print(f"  {record.id:<8} {status}  {record.latency_ms / 1000:.1f} s")
+        checkpoint.parent.mkdir(parents=True, exist_ok=True)
+        with checkpoint.open("a", encoding="utf-8") as handle:
+            handle.write(record.model_dump_json() + "\n")
 
     with open_container() as container:
         settings = container.settings
@@ -167,11 +252,14 @@ def eval_end_to_end(
                     notes=notes,
                     concurrency=concurrency,
                     on_progress=progress,
+                    completed=completed,
                 )
             )
         except LLMUnavailableError as exc:
             console.print(f"[red]Evaluation stopped, LLM provider unavailable:[/red] {exc}")
+            console.print("Graded questions are kept: re-run with --resume to continue.")
             raise typer.Exit(code=2) from exc
+    checkpoint.unlink(missing_ok=True)
     markdown = end_to_end_markdown(report)
     settings.reports_dir.mkdir(parents=True, exist_ok=True)
     (settings.reports_dir / "e2e.md").write_text(markdown, encoding="utf-8")

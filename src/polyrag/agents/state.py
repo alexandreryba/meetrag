@@ -7,12 +7,15 @@ from typing import Annotated, TypedDict
 
 from pydantic import BaseModel, Field
 
-from polyrag.domain.models import Citation, Evidence, Source, TraceEvent
+from polyrag.domain.models import Citation, Evidence, MeetingFilter, Source, TraceEvent
 
 
 class RouteStep(BaseModel):
     source: Source = Field(description="Knowledge source to consult")
     query: str = Field(description="Self-contained query for this source")
+    meeting_filter: MeetingFilter | None = Field(
+        default=None, description="Meetings source only: restrict to some meetings or speakers"
+    )
 
 
 class RoutePlan(BaseModel):

@@ -1,0 +1,46 @@
+{
+  "meeting_id": "2026-03-02-kick-off",
+  "transcript_sha256": "9e53a11445cda1de24947545e1d1ad81b0e9e47d746bb5d368f96aecb5d052b2",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:06+00:00",
+  "insights": {
+    "summary": "This kick-off meeting launched Voltaria's Churn & Data programme and set its scope, budget, schedule and governance. The CFO's goal is to cut churn on the Essentielle offer by three points within six months. Customer Operations noted that customers often leave after price increases or billing disputes, and that advisors have no way to tell who is at risk. Phase 1 covers a churn prediction model, a targeted retention campaign and the data platform they need. Heat pump sales were moved to a possible phase 2. A €450,000 budget was approved, the retention campaign is targeted to go live in September with steering committees every six to eight weeks, and Nadia Benali was named product owner. The group also covered data access, data availability, GDPR limits and the summer availability of business experts.",
+    "decisions": [
+      {
+        "decision": "Heat pump sales are out of scope for phase 1 and would be a possible phase 2 if phase 1 delivers results.",
+        "decided_by": "Marc Lefèvre"
+      },
+      {
+        "decision": "A budget of €450,000 is approved for phase 1, with a budget review at every steering committee.",
+        "decided_by": "Sophie Bernard"
+      },
+      {
+        "decision": "Nadia Benali (retention lead in Customer Operations) is appointed product owner of the programme.",
+        "decided_by": "Sophie Bernard"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Hugo Lambert",
+        "task": "Send the project charter.",
+        "due_date": "2026-03-06"
+      },
+      {
+        "owner": "Claire Dubois",
+        "task": "Share the retention playbook and the results of last year's retention campaign.",
+        "due_date": "2026-03-06"
+      },
+      {
+        "owner": "Thomas Girard",
+        "task": "Give the team access to the BigQuery sandbox.",
+        "due_date": "2026-03-09"
+      }
+    ],
+    "risks": [
+      "GDPR compliance: personal customer data is classified Restricted at Voltaria and must not leave validated systems.",
+      "Hourly smart meter data needs customer consent, which makes it harder to use.",
+      "Business experts will have limited availability in July and August, so workshops must be planned ahead."
+    ]
+  }
+}

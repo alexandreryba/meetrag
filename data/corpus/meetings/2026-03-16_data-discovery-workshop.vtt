@@ -1,0 +1,54 @@
+WEBVTT
+
+NOTE
+title: Data discovery workshop
+type: workshop
+language: en
+participants:
+- Thomas Girard | Data Platform Lead | Voltaria
+- Nadia Benali | Retention Product Owner | Voltaria
+- Léa Moreau | Data Engineer | Consulting team
+- Karim Haddad | Data Scientist | Consulting team
+- Hugo Lambert | Engagement Manager | Consulting team
+
+00:00:04.000 --> 00:00:15.000
+<v Hugo Lambert>Good morning. Today we map every data source we need for the churn model and agree on what goes into the first version.</v>
+
+00:00:16.500 --> 00:00:34.000
+<v Thomas Girard>Sure. We have four sources: the CRM with customer and contract data, the billing system, the support ticketing tool, and the smart meter data that comes from the distribution network operator.</v>
+
+00:00:35.000 --> 00:00:52.000
+<v Léa Moreau>I ran a first profiling on the CRM extract. Um, about 8% of customers have no region, and we see some duplicates, I'd say around 1%.</v>
+
+00:00:53.000 --> 00:01:09.000
+<v Thomas Girard>The missing regions are mostly old contracts migrated in 2021. The billing history starts in January 2025, so we have twenty-one months at most.</v>
+
+00:01:10.000 --> 00:01:31.000
+<v Karim Haddad>That's enough for a first model. What about the hourly smart meter data? Hourly consumption patterns would be a strong signal.</v>
+
+00:01:32.000 --> 00:01:50.000
+<v Thomas Girard>The problem is consent. Only 41% of customers have consented to sharing hourly data, so it would bias the model towards a small part of the base.</v>
+
+00:01:51.000 --> 00:02:10.000
+<v Nadia Benali>And the retention team needs a score for every Essentielle customer, not only the ones with consent.</v>
+
+00:02:11.000 --> 00:02:29.000
+<v Karim Haddad>Then I suggest we build the first version on monthly billing and consumption data, plus support tickets, and keep hourly data for a later version.</v>
+
+00:02:30.000 --> 00:02:39.000
+<v Thomas Girard>Agreed. We use monthly billing data for the first model, not the hourly meter data.</v>
+
+00:02:40.000 --> 00:02:58.000
+<v Nadia Benali>One more thing: price increases. We notify customers one month before an increase on indexed offers, and the support team sees many calls after these emails.</v>
+
+00:02:59.000 --> 00:03:12.000
+<v Karim Haddad>Good point, the the date of the last price notification should be a feature. I'll draft the full feature list by next Monday, March 23rd.</v>
+
+00:03:13.000 --> 00:03:27.000
+<v Léa Moreau>And I'll deliver a complete data quality report on the CRM by Friday the 27th, with the missing regions and the duplicates quantified.</v>
+
+00:03:28.000 --> 00:03:44.000
+<v Thomas Girard>On my side I'll request an extract of hourly data for the consenting customers from the network operator, so we can test it later. No date yet, it depends on them.</v>
+
+00:03:45.000 --> 00:03:58.000
+<v Hugo Lambert>Perfect. The risk to track is the low consent rate on hourly data. Thanks everyone.</v>

@@ -12,13 +12,14 @@ from typing import TYPE_CHECKING, Any
 
 from polyrag.agents.prompts import GRADER_SYSTEM
 from polyrag.agents.state import GradeResult
-from polyrag.domain.models import Evidence, ScoredChunk, TraceEvent
+from polyrag.domain.models import Evidence, ScoredChunk, SearchFilter, Source, TraceEvent
 from polyrag.domain.ports import LLMError
 
 if TYPE_CHECKING:
     from polyrag.agents.state import AgentTask
     from polyrag.domain.ports import LLM
     from polyrag.retrieval.hybrid import HybridRetriever
+    from polyrag.retrieval.meetings import MeetingCatalog
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +36,17 @@ class DocumentAgent:
     name = "document_agent"
 
     def __init__(
-        self, *, retriever: HybridRetriever, llm: LLM, top_k: int = 5, max_rounds: int = 2
+        self,
+        *,
+        retriever: HybridRetriever,
+        llm: LLM,
+        catalog: MeetingCatalog | None = None,
+        top_k: int = 5,
+        max_rounds: int = 2,
     ) -> None:
         self.retriever = retriever
         self.llm = llm
+        self.catalog = catalog
         self.top_k = top_k
         self.max_rounds = max_rounds
 
@@ -48,10 +56,15 @@ class DocumentAgent:
         query = step.query
         kept: dict[str, ScoredChunk] = {}
         trace: list[TraceEvent] = []
+        where = SearchFilter(source=step.source)
+        if step.source is Source.MEETINGS and self.catalog is not None:
+            where, note = self.catalog.resolve(step.meeting_filter)
+            if note:
+                trace.append(TraceEvent(agent=agent, message=f"Meeting filter: {note}"))
 
         for round_number in range(1, self.max_rounds + 1):
             hits = await asyncio.to_thread(
-                self.retriever.retrieve, query, top_k=self.top_k, source=step.source
+                self.retriever.retrieve, query, top_k=self.top_k, where=where
             )
             candidates = [hit for hit in hits if hit.chunk.chunk_id not in kept]
             if not candidates:

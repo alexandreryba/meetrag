@@ -1,0 +1,42 @@
+{
+  "meeting_id": "2026-09-10-go-live-readiness-review",
+  "transcript_sha256": "3b5f38f304e0c6912ef9b293638f6c9f876119792ac2b67c0241e1b31c4351fe",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:26+00:00",
+  "insights": {
+    "summary": "The team met to check whether the go-live planned for September 15th was ready. Thomas Girard reported that the campaign tool failed its load test the day before: with 14,000 customers in scope, it times out while generating call lists. Léa Moreau confirmed the scoring pipeline is fine and scores the full Essentielle base in under ten minutes, so the campaign tool is the only bottleneck. The vendor has a fix, but it needs a few days to apply and retest. The participants agreed to push the go-live back one week to September 22nd, with the next checkpoint on September 18th after the load test is rerun.",
+    "decisions": [
+      {
+        "decision": "Postpone the go-live by one week, from September 15th to September 22nd, because the load test failed.",
+        "decided_by": "Hugo Lambert"
+      },
+      {
+        "decision": "Hold the next checkpoint on September 18th, after the load test is rerun.",
+        "decided_by": "Hugo Lambert"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Nadia Benali",
+        "task": "Tell the retention team that the go-live is postponed to September 22nd.",
+        "due_date": "2026-09-10"
+      },
+      {
+        "owner": "Thomas Girard",
+        "task": "Apply the vendor's fix to the campaign tool and rerun the load test.",
+        "due_date": "2026-09-18"
+      },
+      {
+        "owner": "Claire Dubois",
+        "task": "Staff six additional retention agents for the go-live week.",
+        "due_date": "2026-09-22"
+      }
+    ],
+    "risks": [
+      "The campaign tool times out when generating call lists for 14,000 customers in scope, so it failed the load test.",
+      "The vendor's fix still has to be applied and retested, which will take a few days, so the new go-live date depends on the rerun load test passing.",
+      "Going live with an unstable campaign tool could mean it breaks in front of the retention agents."
+    ]
+  }
+}

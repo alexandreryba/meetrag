@@ -1,0 +1,43 @@
+1
+00:00:03,000 --> 00:00:12,000
+Hugo Lambert: Let's review the final churn model before the pilot starts.
+
+2
+00:00:13,000 --> 00:00:33,000
+Karim Haddad: The final gradient boosting model reaches an AUC of 0.82 on the holdout set, slightly above the 0.81 we showed at the steering committee. It is stable across regions.
+
+3
+00:00:34,000 --> 00:00:58,000
+Karim Haddad: The four main drivers of churn are: a price increase notified in the last three months, the number of billing tickets in the last six months, a tenure below one year, and having no smart meter.
+
+4
+00:00:59,000 --> 00:01:15,000
+Claire Dubois: Billing tickets as a feature, I'm fine with that, it matches what the agents see every day. You can use the billing ticket count.
+
+5
+00:01:16,000 --> 00:01:36,000
+Nadia Benali: How many customers will we contact? The retention team can call about two thousand customers for the pilot.
+
+6
+00:01:37,000 --> 00:01:58,000
+Karim Haddad: We target the top 10% risk decile. Precision in that decile is 0.46, so almost one in two customers we call would really have left.
+
+7
+00:01:59,000 --> 00:02:14,000
+Thomas Girard: And how often do we retrain? The data changes every month with billing.
+
+8
+00:02:15,000 --> 00:02:27,000
+Karim Haddad: Monthly retraining is enough. We agreed on that, the model is retrained every month.
+
+9
+00:02:28,000 --> 00:02:44,000
+Léa Moreau: I'll schedule the monthly retraining pipeline in Cloud Run jobs by June 19th.
+
+10
+00:02:45,000 --> 00:03:01,000
+Karim Haddad: And I'll write the model card, data, metrics, limits and fairness checks, by June 12th.
+
+11
+00:03:02,000 --> 00:03:12,000
+Hugo Lambert: Great. One risk: if price increases change in autumn, the model may drift. Let's monitor it. Thanks.

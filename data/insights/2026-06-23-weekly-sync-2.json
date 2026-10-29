@@ -1,0 +1,32 @@
+{
+  "meeting_id": "2026-06-23-weekly-sync-2",
+  "transcript_sha256": "e14a60ea82b759064d2df18be2017cbe302e048315b6d72195ad954dbb2c05c9",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:15+00:00",
+  "insights": {
+    "summary": "The team held a quick weekly sync on the retention pilot. Nadia reported that the pilot started on 15 June with 2,000 Essentielle customers: 1,000 in a test group receiving the retention call and 1,000 in a control group. It is too early for results, but the advisors find the script clear. Léa said the monthly retraining pipeline is running in Cloud Run and completed its first run without errors. Claire raised that about 3% of CRM phone numbers are invalid, so some test-group customers cannot be reached. Hugo decided to keep these customers in the analysis and flag the issue as a possible bias.",
+    "decisions": [
+      {
+        "decision": "Customers with invalid phone numbers stay in the pilot analysis, and the issue is flagged as a possible bias.",
+        "decided_by": "Hugo Lambert"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Claire Dubois",
+        "task": "Brief the retention advisors on the new script.",
+        "due_date": "2026-06-26"
+      },
+      {
+        "owner": "Nadia Benali",
+        "task": "Send a report on the pilot metrics every Monday.",
+        "due_date": null
+      }
+    ],
+    "risks": [
+      "About 3% of CRM phone numbers are invalid, so some test-group customers cannot be reached, which may bias the pilot results.",
+      "It is still too early to see pilot results."
+    ]
+  }
+}
