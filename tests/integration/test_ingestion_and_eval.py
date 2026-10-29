@@ -17,7 +17,7 @@ from meetrag.infrastructure.sql import SQLiteDatabase
 from meetrag.ingestion.loaders import WIKI_SOURCES, load_corpus
 from meetrag.ingestion.pipeline import load_chunks
 from meetrag.ingestion.transcripts import load_transcripts
-from tests.conftest import ScriptedLLM
+from tests.conftest import Indexed, ScriptedLLM
 
 
 def test_corpus_has_documents_for_every_source(settings: Settings) -> None:
@@ -27,14 +27,16 @@ def test_corpus_has_documents_for_every_source(settings: Settings) -> None:
     assert any(d.title == "Remote Work Policy" for d in documents)
 
 
-def test_ingestion_persists_chunks_and_database(settings: Settings, indexed) -> None:
+def test_ingestion_persists_chunks_and_database(settings: Settings, indexed: Indexed) -> None:
     chunks = load_chunks(settings.chunks_path)
     assert len(chunks) > 50
     assert len({c.chunk_id for c in chunks}) == len(chunks)
     assert settings.database_path.exists()
 
 
-def test_ingestion_indexes_transcripts_and_meeting_tables(settings: Settings, indexed) -> None:
+def test_ingestion_indexes_transcripts_and_meeting_tables(
+    settings: Settings, indexed: Indexed
+) -> None:
     chunks = [c for c in load_chunks(settings.chunks_path) if c.source is Source.MEETINGS]
     assert len({c.doc_id for c in chunks}) == 10
     assert all(c.metadata["speakers"] and c.metadata["date"] for c in chunks)
