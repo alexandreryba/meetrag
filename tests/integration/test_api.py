@@ -57,6 +57,7 @@ def test_api_key_is_enforced_when_configured(container: Container) -> None:
         response = client.get("/v1/sources", headers={"X-API-Key": "s3cret"})
         assert response.status_code == 200
         assert {s["name"] for s in response.json()} == {
+            "meetings",
             "policies",
             "products",
             "support",

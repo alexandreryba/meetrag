@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 SUPPORTED_SUFFIXES = {".md", ".markdown", ".txt", ".html", ".htm", ".pdf"}
+WIKI_SOURCES: tuple[Source, ...] = tuple(s for s in DOCUMENT_SOURCES if s is not Source.MEETINGS)
 _H1 = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 _TAG = re.compile(r"<[^>]+>")
 _BLOCK_TAG = re.compile(r"</?(p|div|br|li|tr|h[1-6]|section|article)[^>]*>", re.IGNORECASE)
@@ -42,8 +43,9 @@ def _title(text: str, path: Path) -> str:
 
 
 def load_corpus(corpus_dir: Path) -> Iterator[Document]:
-    """Yield every supported document; the sub-folder name decides the ``Source``."""
-    for source in DOCUMENT_SOURCES:
+    """Yield every wiki document (policies, products, support); the sub-folder name decides
+    the ``Source``. Meeting transcripts are parsed by ``polyrag.ingestion.transcripts``."""
+    for source in WIKI_SOURCES:
         folder = corpus_dir / source.value
         if not folder.is_dir():
             logger.warning("no folder for source %s in %s", source.value, corpus_dir)

@@ -1,0 +1,49 @@
+WEBVTT
+
+NOTE
+title: Comité de pilotage n°1
+type: steering committee
+language: fr
+participants:
+- Sophie Bernard | CFO | Voltaria
+- Marc Lefèvre | CIO | Voltaria
+- Claire Dubois | Head of Customer Operations | Voltaria
+- Nadia Benali | Retention Product Owner | Voltaria
+- Hugo Lambert | Engagement Manager | Consulting team
+- Karim Haddad | Data Scientist | Consulting team
+
+00:00:06.000 --> 00:00:20.000
+<v Hugo Lambert>Bonjour à tous. Premier comité de pilotage : avancement, budget, risques et décisions pour la suite.</v>
+
+00:00:21.000 --> 00:00:40.000
+<v Hugo Lambert>Côté plateforme, la couche silver est en place et pseudonymisée. Le RSSI a validé l'approche le 29 avril, donc ce risque est levé.</v>
+
+00:00:41.000 --> 00:01:02.000
+<v Karim Haddad>Côté modèle, le gradient boosting atteint une AUC de 0,81, contre 0,74 pour la première version. Les tickets de facturation et les hausses de prix récentes sont les signaux les plus forts.</v>
+
+00:01:03.000 --> 00:01:22.000
+<v Sophie Bernard>Très bien. Et le budget ? On est à combien ?</v>
+
+00:01:23.000 --> 00:01:45.000
+<v Hugo Lambert>On a consommé 190 000 euros sur les 450 000. Mais pour lancer la campagne pilote il faut un outil de campagne et des scripts, on estime le besoin supplémentaire à 30 000 euros.</v>
+
+00:01:46.000 --> 00:02:02.000
+<v Sophie Bernard>J'accepte l'extension. Le budget de la phase 1 passe de 450 000 à 480 000 euros, pour l'outillage de la campagne de rétention.</v>
+
+00:02:03.000 --> 00:02:21.000
+<v Claire Dubois>Il faut aussi décider la cible du pilote. Je propose les clients Essentielle avec au moins deux ans d'ancienneté, parce que le playbook nous permet de leur offrir un mois d'abonnement.</v>
+
+00:02:22.000 --> 00:02:35.000
+<v Marc Lefèvre>Et on laisse le tableau de bord de côté pour l'instant ?</v>
+
+00:02:36.000 --> 00:02:52.000
+<v Sophie Bernard>Oui. Décision : on priorise le modèle et le pilote, le tableau de bord attendra. La cible du pilote, ce sont les clients Essentielle avec deux ans d'ancienneté ou plus.</v>
+
+00:02:53.000 --> 00:03:10.000
+<v Nadia Benali>Je prépare le script de la campagne pilote avec l'équipe rétention pour le 29 mai.</v>
+
+00:03:11.000 --> 00:03:26.000
+<v Karim Haddad>Et je sors la liste des 2 000 clients les plus à risque pour le pilote d'ici le 2 juin.</v>
+
+00:03:27.000 --> 00:03:40.000
+<v Hugo Lambert>Je mets à jour le suivi budgétaire et j'envoie le compte rendu après-demain, le 14 mai. Merci à tous.</v>

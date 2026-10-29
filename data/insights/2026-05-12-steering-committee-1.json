@@ -1,0 +1,44 @@
+{
+  "meeting_id": "2026-05-12-steering-committee-1",
+  "transcript_sha256": "c2029a262c14d0b967686f9b6d8782a5d6b238980fd5fd06f1ef2c43c2078ce5",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:14+00:00",
+  "insights": {
+    "summary": "The first steering committee looked at progress, budget, risks and next steps. The silver data layer is in place and pseudonymised. The CISO approved the approach on 29 April, which lifts that risk. The gradient boosting churn model reached an AUC of 0.81, up from 0.74 for the first version, and its strongest signals are billing tickets and recent price increases. €190,000 of the €450,000 budget has been spent. The CFO approved a €30,000 extension for retention campaign tooling and scripts. The committee chose to focus on the model and the pilot, postpone the dashboard, and target the pilot at Essentielle customers with at least two years of tenure.",
+    "decisions": [
+      {
+        "decision": "Phase 1 budget increased from €450,000 to €480,000 to fund retention campaign tooling.",
+        "decided_by": "Sophie Bernard"
+      },
+      {
+        "decision": "Focus on the model and the pilot campaign; the dashboard is postponed.",
+        "decided_by": "Sophie Bernard"
+      },
+      {
+        "decision": "The pilot targets Essentielle customers with two or more years of tenure (proposed by Claire Dubois).",
+        "decided_by": "Sophie Bernard"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Nadia Benali",
+        "task": "Prepare the pilot campaign script with the retention team.",
+        "due_date": "2026-05-29"
+      },
+      {
+        "owner": "Karim Haddad",
+        "task": "Produce the list of the 2,000 highest-risk customers for the pilot.",
+        "due_date": "2026-06-02"
+      },
+      {
+        "owner": "Hugo Lambert",
+        "task": "Update budget tracking and send the meeting minutes.",
+        "due_date": "2026-05-14"
+      }
+    ],
+    "risks": [
+      "Launching the pilot campaign needed about €30,000 more for a campaign tool and scripts, beyond the original budget (covered by the approved extension)."
+    ]
+  }
+}

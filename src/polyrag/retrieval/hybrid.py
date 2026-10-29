@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from polyrag.retrieval.fusion import reciprocal_rank_fusion
 
 if TYPE_CHECKING:
-    from polyrag.domain.models import ScoredChunk, Source
+    from polyrag.domain.models import ScoredChunk, SearchFilter
     from polyrag.domain.ports import Embedder, Reranker, VectorStore
     from polyrag.retrieval.bm25 import BM25Index
 
@@ -47,19 +47,19 @@ class HybridRetriever:
         query: str,
         *,
         top_k: int = 5,
-        source: Source | None = None,
+        where: SearchFilter | None = None,
         mode: RetrievalMode | None = None,
     ) -> list[ScoredChunk]:
         mode = mode or self.default_mode
         if mode is RetrievalMode.BM25:
-            return self.bm25.search(query, limit=top_k, source=source)
+            return self.bm25.search(query, limit=top_k, where=where)
         dense = self.store.search(
-            self.embedder.embed_query(query), limit=self.candidates_k, source=source
+            self.embedder.embed_query(query), limit=self.candidates_k, where=where
         )
         if mode is RetrievalMode.DENSE:
             return dense[:top_k]
 
-        keyword = self.bm25.search(query, limit=self.candidates_k, source=source)
+        keyword = self.bm25.search(query, limit=self.candidates_k, where=where)
         fused = reciprocal_rank_fusion([keyword, dense], k=self.rrf_k)
         if mode is RetrievalMode.HYBRID:
             return fused[:top_k]

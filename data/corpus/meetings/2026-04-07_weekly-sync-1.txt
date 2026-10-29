@@ -1,0 +1,12 @@
+[00:00:02] Hugo Lambert: Okay, let's start. Quick round on progress and blockers.
+[00:00:09] Léa Moreau: The BigQuery sandbox access was granted on March 11th, two days later than planned, but everything works now. The data quality report is done: 8.4% of customers have no region and 1.2% are duplicates.
+[00:00:31] Thomas Girard: Sorry for the delay on access, the security review took longer.
+[00:00:37] Hugo Lambert: No problem. Karim, the model?
+[00:00:41] Karim Haddad: I have a baseline, a logistic regression on monthly billing, tenure and ticket counts. Um, it reaches an AUC of 0.74 on the validation set. Not bad for a baseline.
+[00:01:02] Nadia Benali: What does 0.74 mean for the retention team, concretely?
+[00:01:08] Karim Haddad: It means the model ranks a churner above a non-churner about three times out of four. I want to push it further with gradient boosting.
+[00:01:22] Hugo Lambert: When can you have that?
+[00:01:25] Karim Haddad: I'll try gradient boosting and report by Friday April 17th.
+[00:01:33] Léa Moreau: Before that I need to deduplicate the customer records in staging, otherwise duplicates leak into the training set. I'll do it by April 14th.
+[00:01:47] Thomas Girard: One blocker on my side: my team has only one engineer available until May, so anything on the production side will be slow.
+[00:02:01] Hugo Lambert: Noted as a risk. We'll keep the production work for June. Anything else? No? Thanks all.

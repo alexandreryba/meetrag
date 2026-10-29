@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from polyrag.config import Settings
 from polyrag.container import Container
-from polyrag.domain.models import DOCUMENT_SOURCES
+from polyrag.domain.models import Source
 from polyrag.evaluation.dataset import load_golden_set
 from polyrag.evaluation.end_to_end import (
     ClaimCheck,
@@ -13,15 +13,17 @@ from polyrag.evaluation.end_to_end import (
     evaluate_end_to_end,
 )
 from polyrag.evaluation.retrieval import evaluate_retrieval
-from polyrag.ingestion.loaders import load_corpus
+from polyrag.infrastructure.sql import SQLiteDatabase
+from polyrag.ingestion.loaders import WIKI_SOURCES, load_corpus
 from polyrag.ingestion.pipeline import load_chunks
+from polyrag.ingestion.transcripts import load_transcripts
 from tests.conftest import ScriptedLLM
 
 
 def test_corpus_has_documents_for_every_source(settings: Settings) -> None:
     documents = list(load_corpus(settings.corpus_dir))
     assert len(documents) == 16
-    assert {d.source for d in documents} == set(DOCUMENT_SOURCES)
+    assert {d.source for d in documents} == set(WIKI_SOURCES)
     assert any(d.title == "Remote Work Policy" for d in documents)
 
 
@@ -32,10 +34,24 @@ def test_ingestion_persists_chunks_and_database(settings: Settings, indexed) -> 
     assert settings.database_path.exists()
 
 
+def test_ingestion_indexes_transcripts_and_meeting_tables(settings: Settings, indexed) -> None:
+    chunks = [c for c in load_chunks(settings.chunks_path) if c.source is Source.MEETINGS]
+    assert len({c.doc_id for c in chunks}) == 10
+    assert all(c.metadata["speakers"] and c.metadata["date"] for c in chunks)
+    database = SQLiteDatabase(settings.database_path)
+    assert database.execute("SELECT COUNT(*) FROM meetings").rows == [[10]]
+    steering = database.execute(
+        "SELECT COUNT(*) FROM meetings WHERE meeting_type = 'steering committee'"
+    )
+    assert steering.rows == [[3]]
+
+
 def test_golden_set_references_existing_documents(settings: Settings) -> None:
     doc_ids = {d.doc_id for d in load_corpus(settings.corpus_dir)}
+    doc_ids |= {t.doc_id for t in load_transcripts(settings.corpus_dir / "meetings")}
     items = load_golden_set(settings.golden_set)
-    assert len(items) >= 40
+    assert len(items) >= 60
+    assert sum(item.category == "meetings" for item in items) >= 10
     for item in items:
         assert set(item.relevant_docs) <= doc_ids, item.id
         assert item.answerable == bool(item.expected_sources), item.id

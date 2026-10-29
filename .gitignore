@@ -24,6 +24,8 @@ reports/*
 !reports/retrieval.json
 !reports/e2e.md
 !reports/e2e.json
+!reports/extraction.md
+!reports/extraction.json
 
 # Secrets and editors
 .env

@@ -1,0 +1,47 @@
+{
+  "meeting_id": "2026-10-06-steering-committee-3",
+  "transcript_sha256": "b4ac2e2571bb8e8649021c0a2ced1c44bcbbaced47c62cf6251da3d7c15723ab",
+  "extraction_version": "1",
+  "model": "claude-opus-5-5",
+  "extracted_at": "2026-10-28T11:56:26+00:00",
+  "insights": {
+    "summary": "The third steering committee reviewed the go-live, the budget and a proposal for phase 2. Go-live happened on 22 September, one week late because of the load test, and has gone smoothly since. Two weeks after go-live, annualised churn on the Essentielle offer is down 2.1 points, short of the 3-point target but trending well. Phase 1 has used 462,000 of its 480,000 euros, and the remaining 18,000 euros covers knowledge transfer. The committee approved phase 2 (heat-pump offers for at-risk customers, 220,000 euros, starting 2 November) subject to board approval, on the condition that Thomas Girard's team takes over running the churn model by 30 November.",
+    "decisions": [
+      {
+        "decision": "Phase 2 (heat-pump offer aimed at at-risk customers, estimated budget of 220,000 euros) is approved subject to board of directors approval before final commitment.",
+        "decided_by": "Sophie Bernard"
+      },
+      {
+        "decision": "IT (DSI) approves launching phase 2 on 2 November, subject to board approval.",
+        "decided_by": "Marc Lefèvre"
+      },
+      {
+        "decision": "Running the churn model will be handed over to Thomas Girard's team by 30 November.",
+        "decided_by": "Sophie Bernard"
+      }
+    ],
+    "action_items": [
+      {
+        "owner": "Thomas Girard",
+        "task": "Have his team take over running the churn model.",
+        "due_date": "2026-11-30"
+      },
+      {
+        "owner": "Karim Haddad",
+        "task": "Run two knowledge-transfer sessions with Thomas Girard's team.",
+        "due_date": "2026-11-15"
+      },
+      {
+        "owner": "Hugo Lambert",
+        "task": "Send the detailed phase 2 proposal.",
+        "due_date": "2026-10-20"
+      }
+    ],
+    "risks": [
+      "Launching phase 2 during winter peak periods could overload customer advisors.",
+      "Phase 2 still needs board of directors approval before final commitment.",
+      "The Essentielle churn reduction (2.1 points annualised) is still below the 3-point target.",
+      "Relying on the consulting firm for model operations in the long term is not acceptable to Customer Operations."
+    ]
+  }
+}

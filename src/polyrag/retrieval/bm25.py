@@ -18,7 +18,7 @@ from polyrag.domain.models import ScoredChunk
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from polyrag.domain.models import Chunk, Source
+    from polyrag.domain.models import Chunk, SearchFilter
 
 _TOKEN = re.compile(r"[a-z0-9]+(?:[.,][0-9]+)?")
 _STOPWORDS = frozenset(
@@ -109,7 +109,9 @@ class BM25Index:
     def __len__(self) -> int:
         return len(self.chunks)
 
-    def search(self, query: str, *, limit: int, source: Source | None = None) -> list[ScoredChunk]:
+    def search(
+        self, query: str, *, limit: int, where: SearchFilter | None = None
+    ) -> list[ScoredChunk]:
         scores: dict[int, float] = defaultdict(float)
         for term in set(tokenize(query)):
             idf = self._idf.get(term)
@@ -124,7 +126,7 @@ class BM25Index:
         results: list[ScoredChunk] = []
         for index, score in ranked:
             chunk = self.chunks[index]
-            if source is None or chunk.source == source:
+            if where is None or where.matches(chunk):
                 results.append(ScoredChunk(chunk=chunk, score=score))
                 if len(results) == limit:
                     break

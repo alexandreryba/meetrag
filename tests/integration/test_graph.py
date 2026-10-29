@@ -83,3 +83,31 @@ async def test_streaming_emits_trace_tokens_and_a_final_result(container: Contai
     assert "token" in types
     tokens = "".join(e["text"] for e in events if e["type"] == "token")
     assert tokens.strip() == events[-1]["result"]["answer"]
+
+
+async def test_meeting_filter_restricts_retrieval_to_the_latest_steering_committee(
+    settings, indexed
+) -> None:
+    from polyrag.agents.state import RoutePlan, RouteStep
+    from polyrag.domain.models import MeetingFilter
+
+    def route_to_last_committee(prompt: str) -> RoutePlan:
+        assert "Meeting catalog: 10 meetings" in prompt  # the router sees the catalog
+        step = RouteStep(
+            source=Source.MEETINGS,
+            query="decisions of the steering committee",
+            meeting_filter=MeetingFilter(meeting_type="steering committee", latest_only=True),
+        )
+        return RoutePlan(reasoning="meetings", steps=[step])
+
+    llm = ScriptedLLM(handlers={RoutePlan: route_to_last_committee})
+    embedder, store = indexed
+    container = Container(
+        settings, embedder=embedder, store=store, reranker=None, llm=llm, fast_llm=llm
+    )
+    result = await container.assistant.ask("What was decided at the last steering committee?")
+    assert result.evidence
+    assert {e.reference.split("#")[0] for e in result.evidence} == {
+        "meetings/2026-10-06-steering-committee-3"
+    }
+    assert any("Meeting filter: 1 meeting(s)" in event.message for event in result.trace)
