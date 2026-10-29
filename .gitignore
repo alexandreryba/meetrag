@@ -14,8 +14,8 @@ dist/
 coverage.xml
 htmlcov/
 
-# Local data: index, analytics database and model caches are rebuilt by `polyrag ingest`
-.polyrag/
+# Local data: index, analytics database and model caches are rebuilt by `meetrag ingest`
+.meetrag/
 .cache/
 
 # Generated reports (the committed results are force-added on purpose)

@@ -13,7 +13,7 @@ access or API keys.
 
 The domain layer defines `Protocol` ports: `LLM` (`complete`, `structured`, `stream`),
 `Embedder`, `VectorStore`, `Reranker` and `SqlDatabase`. Agents only depend on these ports.
-Adapters live in `polyrag.infrastructure`:
+Adapters live in `meetrag.infrastructure`:
 
 | Port | Adapters |
 |---|---|
@@ -23,7 +23,7 @@ Adapters live in `polyrag.infrastructure`:
 | `Reranker` | FastEmbed cross-encoder |
 | `SqlDatabase` | SQLite with guardrails |
 
-`polyrag.container.Container` is the composition root. It builds adapters lazily from
+`meetrag.container.Container` is the composition root. It builds adapters lazily from
 settings and accepts overrides, which is how tests inject fakes.
 
 ## Consequences

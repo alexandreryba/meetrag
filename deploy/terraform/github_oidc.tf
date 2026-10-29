@@ -27,7 +27,7 @@ resource "google_iam_workload_identity_pool_provider" "github" {
 
 resource "google_service_account" "deployer" {
   account_id   = "${var.service_name}-deployer"
-  display_name = "PolyRAG GitHub Actions deployer"
+  display_name = "MeetRAG GitHub Actions deployer"
 }
 
 resource "google_service_account_iam_member" "deployer_wif" {
@@ -43,8 +43,8 @@ resource "google_project_iam_member" "deployer_run" {
 }
 
 resource "google_artifact_registry_repository_iam_member" "deployer_push" {
-  location   = google_artifact_registry_repository.polyrag.location
-  repository = google_artifact_registry_repository.polyrag.repository_id
+  location   = google_artifact_registry_repository.meetrag.location
+  repository = google_artifact_registry_repository.meetrag.repository_id
   role       = "roles/artifactregistry.writer"
   member     = "serviceAccount:${google_service_account.deployer.email}"
 }

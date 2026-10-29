@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from polyrag.config import Settings
-from polyrag.container import Container
-from polyrag.domain.models import Source
-from polyrag.evaluation.dataset import load_golden_set
-from polyrag.evaluation.end_to_end import (
+from meetrag.config import Settings
+from meetrag.container import Container
+from meetrag.domain.models import Source
+from meetrag.evaluation.dataset import load_golden_set
+from meetrag.evaluation.end_to_end import (
     ClaimCheck,
     CorrectnessVerdict,
     FaithfulnessVerdict,
@@ -12,11 +12,11 @@ from polyrag.evaluation.end_to_end import (
     end_to_end_markdown,
     evaluate_end_to_end,
 )
-from polyrag.evaluation.retrieval import evaluate_retrieval
-from polyrag.infrastructure.sql import SQLiteDatabase
-from polyrag.ingestion.loaders import WIKI_SOURCES, load_corpus
-from polyrag.ingestion.pipeline import load_chunks
-from polyrag.ingestion.transcripts import load_transcripts
+from meetrag.evaluation.retrieval import evaluate_retrieval
+from meetrag.infrastructure.sql import SQLiteDatabase
+from meetrag.ingestion.loaders import WIKI_SOURCES, load_corpus
+from meetrag.ingestion.pipeline import load_chunks
+from meetrag.ingestion.transcripts import load_transcripts
 from tests.conftest import ScriptedLLM
 
 

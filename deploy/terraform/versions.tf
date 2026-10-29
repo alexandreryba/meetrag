@@ -11,7 +11,7 @@ terraform {
   # Recommended: keep state in a GCS bucket.
   # backend "gcs" {
   #   bucket = "my-terraform-state"
-  #   prefix = "polyrag"
+  #   prefix = "meetrag"
   # }
 }
 

@@ -12,13 +12,13 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from polyrag.agents.state import GradeResult, RoutePlan, RouteStep, SqlDraft, Verdict
-from polyrag.config import Settings
-from polyrag.container import Container
-from polyrag.domain.models import Source
-from polyrag.domain.ports import Effort
-from polyrag.infrastructure.embeddings import HashingEmbedder
-from polyrag.infrastructure.vectorstores import InMemoryVectorStore
+from meetrag.agents.state import GradeResult, RoutePlan, RouteStep, SqlDraft, Verdict
+from meetrag.config import Settings
+from meetrag.container import Container
+from meetrag.domain.models import Source
+from meetrag.domain.ports import Effort
+from meetrag.infrastructure.embeddings import HashingEmbedder
+from meetrag.infrastructure.vectorstores import InMemoryVectorStore
 
 ROOT = Path(__file__).resolve().parents[1]
 

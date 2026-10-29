@@ -1,8 +1,8 @@
 from datetime import date
 
-from polyrag.domain.models import Chunk, MeetingFilter, SearchFilter, Source
-from polyrag.retrieval.bm25 import BM25Index
-from polyrag.retrieval.meetings import MeetingCatalog, MeetingInfo
+from meetrag.domain.models import Chunk, MeetingFilter, SearchFilter, Source
+from meetrag.retrieval.bm25 import BM25Index
+from meetrag.retrieval.meetings import MeetingCatalog, MeetingInfo
 
 
 def _meeting(doc_id: str, day: str, kind: str, people: list[str]) -> MeetingInfo:

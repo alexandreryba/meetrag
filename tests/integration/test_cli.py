@@ -6,8 +6,8 @@ from contextlib import contextmanager
 import pytest
 from typer.testing import CliRunner
 
-from polyrag import cli
-from polyrag.container import Container
+from meetrag import cli
+from meetrag.container import Container
 
 runner = CliRunner()
 

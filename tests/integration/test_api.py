@@ -5,8 +5,8 @@ import json
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from polyrag.api.app import create_app
-from polyrag.container import Container
+from meetrag.api.app import create_app
+from meetrag.container import Container
 
 
 def _client(container: Container) -> TestClient:
@@ -66,7 +66,7 @@ def test_api_key_is_enforced_when_configured(container: Container) -> None:
 
 
 def test_missing_llm_credentials_return_503(container: Container) -> None:
-    from polyrag.domain.ports import LLMConfigurationError
+    from meetrag.domain.ports import LLMConfigurationError
 
     class Unconfigured:
         async def ask(self, question: str) -> None:
