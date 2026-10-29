@@ -25,19 +25,19 @@ test: ## Run the test suite with coverage
 check: lint typecheck test ## Everything CI runs
 
 ingest: ## Build the vector index and the analytics database
-	uv run polyrag ingest
+	uv run meetrag ingest
 
 eval-retrieval: ## Offline retrieval benchmark (no API key needed)
-	uv run polyrag eval retrieval --min-mrr 0.90
+	uv run meetrag eval retrieval --min-mrr 0.90
 
 eval: ## End-to-end evaluation with an LLM judge (needs an API key)
-	uv run polyrag eval e2e
+	uv run meetrag eval e2e
 
 serve: ## Run the API and demo UI on http://localhost:8000
-	uv run polyrag serve --reload
+	uv run meetrag serve --reload
 
 docker-build: ## Build the production image
-	docker build -t polyrag:local .
+	docker build -t meetrag:local .
 
 docker-run: ## Run the production image on http://localhost:8080
-	docker run --rm -p 8080:8080 --env-file .env polyrag:local
+	docker run --rm -p 8080:8080 --env-file .env meetrag:local

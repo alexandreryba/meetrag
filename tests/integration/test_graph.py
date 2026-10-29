@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import itertools
 
-from polyrag.agents.prompts import ABSTAIN_MESSAGE
-from polyrag.agents.state import SqlDraft, Verdict
-from polyrag.container import Container
-from polyrag.domain.models import Source
+from meetrag.agents.prompts import ABSTAIN_MESSAGE
+from meetrag.agents.state import SqlDraft, Verdict
+from meetrag.container import Container
+from meetrag.domain.models import Source
 from tests.conftest import ScriptedLLM
 
 
@@ -88,8 +88,8 @@ async def test_streaming_emits_trace_tokens_and_a_final_result(container: Contai
 async def test_meeting_filter_restricts_retrieval_to_the_latest_steering_committee(
     settings, indexed
 ) -> None:
-    from polyrag.agents.state import RoutePlan, RouteStep
-    from polyrag.domain.models import MeetingFilter
+    from meetrag.agents.state import RoutePlan, RouteStep
+    from meetrag.domain.models import MeetingFilter
 
     def route_to_last_committee(prompt: str) -> RoutePlan:
         assert "Meeting catalog: 10 meetings" in prompt  # the router sees the catalog

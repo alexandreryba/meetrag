@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from polyrag.demo.voltaria_db import OFFERS, build_database
-from polyrag.domain.ports import QueryError
-from polyrag.infrastructure.sql import SQLiteDatabase, validate_select
+from meetrag.demo.voltaria_db import OFFERS, build_database
+from meetrag.domain.ports import QueryError
+from meetrag.infrastructure.sql import SQLiteDatabase, validate_select
 
 
 @pytest.fixture(scope="module")

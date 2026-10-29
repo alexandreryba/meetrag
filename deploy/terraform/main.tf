@@ -12,7 +12,7 @@ locals {
   )
   # Secrets are created empty here; values are added out of band so they never reach the
   # Terraform state:  echo -n "$KEY" | gcloud secrets versions add <name> --data-file=-
-  secrets = local.use_vertex ? ["polyrag-api-key"] : ["polyrag-api-key", "anthropic-api-key"]
+  secrets = local.use_vertex ? ["meetrag-api-key"] : ["meetrag-api-key", "anthropic-api-key"]
 }
 
 resource "google_project_service" "enabled" {
@@ -22,11 +22,11 @@ resource "google_project_service" "enabled" {
 }
 
 # --- Container registry ---------------------------------------------------------------------
-resource "google_artifact_registry_repository" "polyrag" {
+resource "google_artifact_registry_repository" "meetrag" {
   location      = var.region
-  repository_id = "polyrag"
+  repository_id = "meetrag"
   format        = "DOCKER"
-  description   = "PolyRAG API images"
+  description   = "MeetRAG API images"
 
   cleanup_policies {
     id     = "keep-last-10"
@@ -42,7 +42,7 @@ resource "google_artifact_registry_repository" "polyrag" {
 # --- Runtime identity and secrets -------------------------------------------------------------
 resource "google_service_account" "runtime" {
   account_id   = "${var.service_name}-runtime"
-  display_name = "PolyRAG Cloud Run runtime"
+  display_name = "MeetRAG Cloud Run runtime"
 }
 
 resource "google_secret_manager_secret" "secrets" {
@@ -105,29 +105,29 @@ resource "google_cloud_run_v2_service" "api" {
       }
 
       env {
-        name  = "POLYRAG_LLM_PROVIDER"
+        name  = "MEETRAG_LLM_PROVIDER"
         value = var.llm_provider
       }
       env {
-        name  = "POLYRAG_LLM_MODEL"
+        name  = "MEETRAG_LLM_MODEL"
         value = var.llm_model
       }
       env {
-        name  = "POLYRAG_LLM_FAST_MODEL"
+        name  = "MEETRAG_LLM_FAST_MODEL"
         value = var.llm_fast_model
       }
       dynamic "env" {
         for_each = local.use_vertex ? [1] : []
         content {
-          name  = "POLYRAG_GCP_PROJECT"
+          name  = "MEETRAG_GCP_PROJECT"
           value = var.project_id
         }
       }
       env {
-        name = "POLYRAG_API_KEY"
+        name = "MEETRAG_API_KEY"
         value_source {
           secret_key_ref {
-            secret  = google_secret_manager_secret.secrets["polyrag-api-key"].secret_id
+            secret  = google_secret_manager_secret.secrets["meetrag-api-key"].secret_id
             version = "latest"
           }
         }

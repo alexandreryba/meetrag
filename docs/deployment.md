@@ -1,4 +1,4 @@
-# Deploying PolyRAG on Google Cloud Run
+# Deploying MeetRAG on Google Cloud Run
 
 The infrastructure lives in [`deploy/terraform`](../deploy/terraform); the
 [`deploy.yml`](../.github/workflows/deploy.yml) workflow ships new images.
@@ -7,12 +7,12 @@ The infrastructure lives in [`deploy/terraform`](../deploy/terraform); the
 
 | Resource | Purpose |
 |---|---|
-| Artifact Registry repository `polyrag` | Docker images, last 10 kept |
-| Cloud Run service `polyrag` | 2 vCPU, 2 GiB, 0 to 3 instances, probes on `/healthz` |
-| Service account `polyrag-runtime` | Runtime identity: reads its secrets (and calls Vertex AI if enabled) |
-| Secret Manager `polyrag-api-key`, `anthropic-api-key` | Injected as environment variables; values never pass through Terraform |
+| Artifact Registry repository `meetrag` | Docker images, last 10 kept |
+| Cloud Run service `meetrag` | 2 vCPU, 2 GiB, 0 to 3 instances, probes on `/healthz` |
+| Service account `meetrag-runtime` | Runtime identity: reads its secrets (and calls Vertex AI if enabled) |
+| Secret Manager `meetrag-api-key`, `anthropic-api-key` | Injected as environment variables; values never pass through Terraform |
 | Workload Identity pool `github` + provider | GitHub Actions authenticates with OIDC, restricted to this repository |
-| Service account `polyrag-deployer` | Pushes images and deploys revisions |
+| Service account `meetrag-deployer` | Pushes images and deploys revisions |
 
 With `llm_provider = "anthropic-vertex"`, no Anthropic key is needed: the runtime service
 account gets `roles/aiplatform.user` and Claude is called through Vertex AI.
@@ -28,7 +28,7 @@ terraform init
 terraform apply -target=google_project_service.enabled -target=google_secret_manager_secret.secrets
 
 # 2. Add the secret values (they never touch the Terraform state)
-openssl rand -hex 24 | gcloud secrets versions add polyrag-api-key --data-file=-
+openssl rand -hex 24 | gcloud secrets versions add meetrag-api-key --data-file=-
 echo -n "$ANTHROPIC_API_KEY" | gcloud secrets versions add anthropic-api-key --data-file=-
 
 # 3. Create everything else
@@ -54,4 +54,4 @@ and deployments do not conflict.
 
 With `min_instances = 0` the service scales to zero, so an idle demo costs close to nothing
 (Artifact Registry storage and secrets). The main cost is LLM usage per question, reported by
-`polyrag eval e2e`.
+`meetrag eval e2e`.

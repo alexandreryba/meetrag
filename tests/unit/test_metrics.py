@@ -1,6 +1,6 @@
 import pytest
 
-from polyrag.evaluation.metrics import (
+from meetrag.evaluation.metrics import (
     hit_at_k,
     ndcg_at_k,
     percentile,

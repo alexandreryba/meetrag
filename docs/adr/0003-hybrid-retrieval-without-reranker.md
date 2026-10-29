@@ -17,7 +17,7 @@ Reciprocal Rank Fusion (k = 60). RRF only uses ranks, so the two score scales ne
 calibrating. Chunks are split along Markdown headings and indexed with their heading path
 prepended (contextual chunk headers).
 
-The decision is based on `polyrag eval retrieval` (33 labelled questions, 98 chunks):
+The decision is based on `meetrag eval retrieval` (33 labelled questions, 98 chunks):
 
 | Mode | Hit@1 | Recall@5 | MRR@10 | Latency |
 |---|---|---|---|---|
@@ -29,7 +29,7 @@ The decision is based on `polyrag eval retrieval` (33 labelled questions, 98 chu
 - Hybrid is the only mode with perfect Recall@5. Agents take the top 5 passages and an LLM
   grader removes distractors, so recall is the metric that matters at this stage.
 - The cross-encoder costs about 1 s per query and improves no metric on this corpus, so it is
-  disabled by default (`POLYRAG_RERANKER_MODEL` re-enables it).
+  disabled by default (`MEETRAG_RERANKER_MODEL` re-enables it).
 
 ## Update, 2026-10-28: with meeting transcripts
 

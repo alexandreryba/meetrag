@@ -1,6 +1,6 @@
-from polyrag.agents.prompts import ABSTAIN_MESSAGE
-from polyrag.agents.synthesis import extract_citations, is_abstention, unique_evidence
-from polyrag.domain.models import Evidence, Source
+from meetrag.agents.prompts import ABSTAIN_MESSAGE
+from meetrag.agents.synthesis import extract_citations, is_abstention, unique_evidence
+from meetrag.domain.models import Evidence, Source
 
 
 def _evidence(ref: str) -> Evidence:

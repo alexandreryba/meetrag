@@ -8,9 +8,9 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from polyrag.domain.ports import LLMError
-from polyrag.infrastructure.llm.anthropic_llm import AnthropicLLM
-from polyrag.observability import track_usage
+from meetrag.domain.ports import LLMError
+from meetrag.infrastructure.llm.anthropic_llm import AnthropicLLM
+from meetrag.observability import track_usage
 
 
 class Answer(BaseModel):
@@ -97,7 +97,7 @@ async def test_failures_become_llm_errors(message: Any, match: str) -> None:
 async def test_missing_credentials_raise_a_configuration_error() -> None:
     from anthropic import AsyncAnthropic
 
-    from polyrag.domain.ports import LLMConfigurationError
+    from meetrag.domain.ports import LLMConfigurationError
 
     llm = AnthropicLLM("claude-opus-5-5", client=AsyncAnthropic(api_key=None, auth_token=None))
     with pytest.raises(LLMConfigurationError, match="ANTHROPIC_API_KEY"):

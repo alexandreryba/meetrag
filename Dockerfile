@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Bake the embedding model, the vector index and the analytics database into the image:
 # a cold start on Cloud Run downloads nothing and serves the first request immediately.
-RUN /app/.venv/bin/polyrag ingest
+RUN /app/.venv/bin/meetrag ingest
 
 # ---- Runtime: slim, non-root ----------------------------------------------------------------
 FROM python:3.12-slim AS runtime
@@ -38,8 +38,8 @@ COPY --from=builder --chown=app:app /app /app
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     FASTEMBED_CACHE_PATH=/app/.cache/fastembed \
-    POLYRAG_LOG_JSON=true \
-    POLYRAG_AUTO_INGEST=false \
+    MEETRAG_LOG_JSON=true \
+    MEETRAG_AUTO_INGEST=false \
     PORT=8080
 
 USER app
@@ -47,4 +47,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=20s \
     CMD python -c "import urllib.request,os; urllib.request.urlopen(f'http://127.0.0.1:{os.environ[\"PORT\"]}/healthz')"
 
-CMD ["sh", "-c", "exec uvicorn polyrag.api.app:create_app --factory --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "exec uvicorn meetrag.api.app:create_app --factory --host 0.0.0.0 --port ${PORT}"]
