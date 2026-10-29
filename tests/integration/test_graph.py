@@ -4,9 +4,10 @@ import itertools
 
 from meetrag.agents.prompts import ABSTAIN_MESSAGE
 from meetrag.agents.state import SqlDraft, Verdict
+from meetrag.config import Settings
 from meetrag.container import Container
 from meetrag.domain.models import Source
-from tests.conftest import ScriptedLLM
+from tests.conftest import Indexed, ScriptedLLM
 
 
 async def test_document_question_is_answered_with_citations(container: Container) -> None:
@@ -42,7 +43,9 @@ async def test_multi_source_question_fans_out_to_sql_and_documents(container: Co
     assert "active_customers" in table.content
 
 
-async def test_sql_agent_self_corrects_after_a_rejected_query(settings, indexed) -> None:
+async def test_sql_agent_self_corrects_after_a_rejected_query(
+    settings: Settings, indexed: Indexed
+) -> None:
     drafts = itertools.chain(
         [SqlDraft(sql="DROP TABLE customers", rationale="bad")],
         itertools.repeat(SqlDraft(sql="SELECT COUNT(*) AS n FROM support_tickets", rationale="ok")),
@@ -59,7 +62,9 @@ async def test_sql_agent_self_corrects_after_a_rejected_query(settings, indexed)
     assert any("SELECT COUNT(*) AS n FROM support_tickets" in e.reference for e in result.evidence)
 
 
-async def test_verifier_triggers_one_rewrite_then_stops(settings, indexed) -> None:
+async def test_verifier_triggers_one_rewrite_then_stops(
+    settings: Settings, indexed: Indexed
+) -> None:
     llm = ScriptedLLM(
         handlers={Verdict: lambda _: Verdict(grounded=False, unsupported_claims=["made-up claim"])}
     )
@@ -86,7 +91,7 @@ async def test_streaming_emits_trace_tokens_and_a_final_result(container: Contai
 
 
 async def test_meeting_filter_restricts_retrieval_to_the_latest_steering_committee(
-    settings, indexed
+    settings: Settings, indexed: Indexed
 ) -> None:
     from meetrag.agents.state import RoutePlan, RouteStep
     from meetrag.domain.models import MeetingFilter
