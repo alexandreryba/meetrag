@@ -19,7 +19,7 @@ speaker, mixes meetings and ignores time.
    fallback; the meeting type is inferred from the title in French or English.
 2. **Cleaning.** Fillers (`um`, `euh`...) and stutters are removed, consecutive turns of the
    same speaker are merged, and emails and phone numbers are masked before indexing
-   (`POLYRAG_REDACT_PII`). The phone pattern only accepts numbers starting with `+` or `0`
+   (`MEETRAG_REDACT_PII`). The phone pattern only accepts numbers starting with `+` or `0`
    and 9 to 15 digits: the first version also masked amounts such as "450 000 euros", which a
    test now guards against.
 3. **Chunking by speaker turns.** A turn is never split from its speaker; chunks of about
@@ -57,7 +57,7 @@ speaker, mixes meetings and ignores time.
 - Questions about decisions and commitments get complete answers from SQL and quotes with
   timestamps from the transcripts, in the same answer.
 - Extraction quality is measured offline against hand-annotated records
-  (`polyrag eval extraction`), so a prompt change that degrades it is visible.
+  (`meetrag eval extraction`), so a prompt change that degrades it is visible.
 - Speaker attribution relies on the transcript tool's diarization; audio transcription and
   diarization are out of scope.
 - Every user sees every meeting. A production deployment would filter retrieval by the

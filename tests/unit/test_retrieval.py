@@ -1,9 +1,9 @@
-from polyrag.domain.models import Chunk, ScoredChunk, SearchFilter, Source
-from polyrag.infrastructure.embeddings import HashingEmbedder
-from polyrag.infrastructure.vectorstores import InMemoryVectorStore
-from polyrag.retrieval.bm25 import BM25Index, tokenize
-from polyrag.retrieval.fusion import reciprocal_rank_fusion
-from polyrag.retrieval.hybrid import HybridRetriever, RetrievalMode
+from meetrag.domain.models import Chunk, ScoredChunk, SearchFilter, Source
+from meetrag.infrastructure.embeddings import HashingEmbedder
+from meetrag.infrastructure.vectorstores import InMemoryVectorStore
+from meetrag.retrieval.bm25 import BM25Index, tokenize
+from meetrag.retrieval.fusion import reciprocal_rank_fusion
+from meetrag.retrieval.hybrid import HybridRetriever, RetrievalMode
 
 
 def _chunk(chunk_id: str, text: str, source: Source = Source.PRODUCTS) -> Chunk:

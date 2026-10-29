@@ -12,13 +12,13 @@ variable "region" {
 variable "service_name" {
   description = "Cloud Run service name."
   type        = string
-  default     = "polyrag"
+  default     = "meetrag"
 }
 
 variable "github_repository" {
   description = "GitHub repository allowed to deploy, as owner/name."
   type        = string
-  default     = "alexandreryba/polyrag"
+  default     = "alexandreryba/meetrag"
 }
 
 variable "llm_provider" {

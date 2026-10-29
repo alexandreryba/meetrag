@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 60
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      POLYRAG_LLM_FAST_MODEL: ${{ inputs.fast_model }}
+      MEETRAG_LLM_FAST_MODEL: ${{ inputs.fast_model }}
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
@@ -29,8 +29,8 @@ jobs:
           enable-cache: true
           python-version: "3.12"
       - run: uv sync --frozen
-      - run: uv run polyrag ingest
-      - run: uv run polyrag eval e2e ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }}
+      - run: uv run meetrag ingest
+      - run: uv run meetrag eval e2e ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }}
       - run: cat reports/e2e.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:

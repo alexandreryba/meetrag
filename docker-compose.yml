@@ -1,19 +1,19 @@
 services:
   api:
     build: .
-    image: polyrag:local
+    image: meetrag:local
     ports:
       - "8080:8080"
     env_file:
       - path: .env
         required: false
     environment:
-      POLYRAG_LOG_JSON: "false"
+      MEETRAG_LOG_JSON: "false"
     restart: unless-stopped
 
   # Optional: run Qdrant as a server instead of the embedded mode.
   #   docker compose --profile qdrant up
-  # and set POLYRAG_QDRANT_URL=http://qdrant:6333 (then run `polyrag ingest` against it).
+  # and set MEETRAG_QDRANT_URL=http://qdrant:6333 (then run `meetrag ingest` against it).
   qdrant:
     image: qdrant/qdrant:v1.20.0
     profiles: ["qdrant"]

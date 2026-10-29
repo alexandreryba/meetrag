@@ -35,4 +35,4 @@ The judge's own token usage is excluded from the cost figures. Latency is measur
 - End-to-end numbers are reproducible from a single command and published as a report, which
   makes claims about the system verifiable.
 - LLM judges have biases; using a different judge model from the system under test reduces
-  self-preference, and is supported through `POLYRAG_JUDGE_MODEL`.
+  self-preference, and is supported through `MEETRAG_JUDGE_MODEL`.

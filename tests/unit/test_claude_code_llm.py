@@ -16,9 +16,9 @@ from claude_agent_sdk import (
 from claude_agent_sdk.types import RateLimitInfo
 from pydantic import BaseModel
 
-from polyrag.domain.ports import LLMConfigurationError, LLMError, LLMUnavailableError
-from polyrag.infrastructure.llm.claude_code_llm import ClaudeCodeLLM
-from polyrag.observability import track_usage
+from meetrag.domain.ports import LLMConfigurationError, LLMError, LLMUnavailableError
+from meetrag.infrastructure.llm.claude_code_llm import ClaudeCodeLLM
+from meetrag.observability import track_usage
 
 
 class Answer(BaseModel):

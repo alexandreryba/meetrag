@@ -1,8 +1,8 @@
-# PolyRAG
+# MeetRAG
 
 **A multi-agent RAG assistant that answers questions across meeting transcripts, documents _and_ a SQL database, with citations, a groundedness check, and a built-in evaluation harness.**
 
-[![CI](https://github.com/alexandreryba/polyrag/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandreryba/polyrag/actions/workflows/ci.yml)
+[![CI](https://github.com/alexandreryba/meetrag/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandreryba/meetrag/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 ![Types](https://img.shields.io/badge/mypy-strict-informational)
 ![Lint](https://img.shields.io/badge/lint-ruff-261230)
@@ -20,7 +20,7 @@ the client's documentation or data. *"What was decided at the last steering comm
 *"Why did we drop hourly meter data?"*, *"Which actions are due in November, and who owns
 them?"*: finding the answer means re-reading recordings.
 
-PolyRAG is the assistant I wanted as a data & AI consultant. It routes each question to
+MeetRAG is the assistant I wanted as a data & AI consultant. It routes each question to
 specialist agents, runs them in parallel over **meeting transcripts**, **documents** and a
 **SQL database**, and only returns answers whose claims are backed by the evidence, with the
 speaker, meeting and timestamp of every quote:
@@ -56,13 +56,13 @@ speaker, meeting and timestamp of every quote:
 > 16 internal documents and a 40,000-row database generated with a fixed seed. A synthetic
 > dataset makes the right answer to every evaluation question known, which is what allows the
 > system to be measured, and keeps any real client data out of a public repository. Point
-> `POLYRAG_CORPUS_DIR` at your own folders to use your material ([data/README.md](data/README.md)).
+> `MEETRAG_CORPUS_DIR` at your own folders to use your material ([data/README.md](data/README.md)).
 
 ---
 
 ## Use cases
 
-PolyRAG targets one pattern that plain RAG handles badly: **questions whose answer is spread
+MeetRAG targets one pattern that plain RAG handles badly: **questions whose answer is spread
 across what was said in meetings, what is written in documents and what is in the data**.
 
 | Who asks | Example question | Sources used |
@@ -122,13 +122,13 @@ whole graph runs in tests with in-memory fakes and a scripted LLM, without netwo
 
 | Layer | Package | Content |
 |---|---|---|
-| Domain | `polyrag.domain` | Pydantic models (`Chunk`, `SearchFilter`, `MeetingFilter`, `AnswerResult`...) and ports |
-| Agents | `polyrag.agents` | Router, document agent, SQL agent, synthesizer, verifier, LangGraph wiring |
-| Retrieval | `polyrag.retrieval` | BM25, RRF fusion, hybrid retriever, meeting catalog |
-| Ingestion | `polyrag.ingestion` | Document loaders and chunker; transcript parser, cleaner and turn chunker; meeting-record extraction |
-| Infrastructure | `polyrag.infrastructure` | Claude (Anthropic SDK, Vertex AI, Claude Code), LangChain adapter, FastEmbed, Qdrant, SQLite |
-| Evaluation | `polyrag.evaluation` | Golden set, retrieval metrics, extraction scoring, LLM-as-judge |
-| Interfaces | `polyrag.api`, `polyrag.cli` | FastAPI + SSE + demo UI, Typer CLI |
+| Domain | `meetrag.domain` | Pydantic models (`Chunk`, `SearchFilter`, `MeetingFilter`, `AnswerResult`...) and ports |
+| Agents | `meetrag.agents` | Router, document agent, SQL agent, synthesizer, verifier, LangGraph wiring |
+| Retrieval | `meetrag.retrieval` | BM25, RRF fusion, hybrid retriever, meeting catalog |
+| Ingestion | `meetrag.ingestion` | Document loaders and chunker; transcript parser, cleaner and turn chunker; meeting-record extraction |
+| Infrastructure | `meetrag.infrastructure` | Claude (Anthropic SDK, Vertex AI, Claude Code), LangChain adapter, FastEmbed, Qdrant, SQLite |
+| Evaluation | `meetrag.evaluation` | Golden set, retrieval metrics, extraction scoring, LLM-as-judge |
+| Interfaces | `meetrag.api`, `meetrag.cli` | FastAPI + SSE + demo UI, Typer CLI |
 
 Design decisions are recorded as [ADRs](docs/adr/), including the
 [meeting transcripts design](docs/adr/0006-meeting-transcripts.md).
@@ -139,7 +139,7 @@ Design decisions are recorded as [ADRs](docs/adr/), including the
 
 ### End-to-end (LLM-as-judge)
 
-`polyrag eval e2e` runs the full graph on the 67 questions, then grades each answer with an
+`meetrag eval e2e` runs the full graph on the 67 questions, then grades each answer with an
 LLM judge. For SQL questions the judge compares against the **result of a reference query
 executed at evaluation time**, so reference figures are exact. Results (Claude Opus 5.5 for every role, run on 2026-10-28):
 
@@ -187,13 +187,13 @@ removed again so that the figures stay honest.
 **Reading these numbers.** The run went through the Claude Code CLI on a Claude subscription
 (`claude-code` provider): latency includes the CLI start-up of each of the ~4 sequential calls,
 so it overstates what the API gives. The judge is the same model as the system, which can
-favour its own style; `POLYRAG_JUDGE_MODEL` lets you use another one. The dataset is small and
+favour its own style; `MEETRAG_JUDGE_MODEL` lets you use another one. The dataset is small and
 clean; the difficulty lies in routing, cross-source and cross-meeting questions, attribution
 and abstention, which is what the golden set targets. Full report: [reports/e2e.md](reports/e2e.md).
 
 ### Meeting-record extraction (offline)
 
-`polyrag eval extraction` compares the cached LLM extractions with hand-annotated records of
+`meetrag eval extraction` compares the cached LLM extractions with hand-annotated records of
 the 10 meetings ([eval/meeting_records_gold.jsonl](eval/meeting_records_gold.jsonl)). An action
 item matches when the owner is the same person and the tasks are paraphrases (embedding cosine
 similarity of at least 0.70; true matches score 0.78 or more, median 0.92, while the closest
@@ -212,7 +212,7 @@ it empty. The annotation was not changed after seeing the result. Report:
 
 ### Retrieval (offline, runs in CI)
 
-`polyrag eval retrieval`, on the 48 golden-set questions that have labelled source documents
+`meetrag eval retrieval`, on the 48 golden-set questions that have labelled source documents
 (123 chunks, global search across all sources). The CI fails if hybrid MRR@10 drops below 0.90.
 
 | Mode | Hit@1 | Hit@5 | Recall@5 | MRR@10 | nDCG@5 | Latency |
@@ -242,18 +242,18 @@ What the numbers say, and what was decided:
 Requirements: Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/alexandreryba/polyrag.git && cd polyrag
+git clone https://github.com/alexandreryba/meetrag.git && cd meetrag
 uv sync --all-extras
 cp .env.example .env            # then set ANTHROPIC_API_KEY (or use your Claude subscription, below)
 
-uv run polyrag ingest           # index transcripts and documents, build the database (~20 s)
-uv run polyrag eval retrieval   # offline benchmark, no API key needed
-uv run polyrag ask "What was decided at the last steering committee?"
-uv run polyrag serve            # API + demo UI on http://127.0.0.1:8000
+uv run meetrag ingest           # index transcripts and documents, build the database (~20 s)
+uv run meetrag eval retrieval   # offline benchmark, no API key needed
+uv run meetrag ask "What was decided at the last steering committee?"
+uv run meetrag serve            # API + demo UI on http://127.0.0.1:8000
 ```
 
 Meeting records (decisions, action items, risks) are already extracted in `data/insights/`.
-After adding or changing transcripts, run `uv run polyrag extract` (one LLM call per new or
+After adding or changing transcripts, run `uv run meetrag extract` (one LLM call per new or
 changed meeting; unchanged meetings come from the cache).
 
 With Docker:
@@ -266,10 +266,10 @@ docker compose up --build       # http://localhost:8080
 
 | Provider | Settings |
 |---|---|
-| Claude API (default) | `ANTHROPIC_API_KEY`, `POLYRAG_LLM_MODEL=claude-opus-5-5` |
-| Claude on Vertex AI | `POLYRAG_LLM_PROVIDER=anthropic-vertex`, `POLYRAG_GCP_PROJECT`, Application Default Credentials |
-| Any LangChain chat model | `POLYRAG_LLM_PROVIDER=langchain`, `POLYRAG_LLM_MODEL=google_genai:gemini-2.5-flash` (install the provider package) |
-| Claude subscription, local only | `uv sync --extra subscription`, `POLYRAG_LLM_PROVIDER=claude-code`: runs through your Claude Code login (Pro or Max plan), no API key |
+| Claude API (default) | `ANTHROPIC_API_KEY`, `MEETRAG_LLM_MODEL=claude-opus-5-5` |
+| Claude on Vertex AI | `MEETRAG_LLM_PROVIDER=anthropic-vertex`, `MEETRAG_GCP_PROJECT`, Application Default Credentials |
+| Any LangChain chat model | `MEETRAG_LLM_PROVIDER=langchain`, `MEETRAG_LLM_MODEL=google_genai:gemini-2.5-flash` (install the provider package) |
+| Claude subscription, local only | `uv sync --extra subscription`, `MEETRAG_LLM_PROVIDER=claude-code`: runs through your Claude Code login (Pro or Max plan), no API key |
 
 The `claude-code` provider drives the Claude Code CLI through the
 [Claude Agent SDK](https://pypi.org/project/claude-agent-sdk/), one tool-free turn per call,
@@ -278,8 +278,8 @@ evaluation on your own machine: subscription access is personal, so the deployed
 the API or Vertex AI. Each call starts a CLI process, which adds about 2 s of latency; when the
 subscription's usage limit is reached, an evaluation stops cleanly and `--resume` continues it.
 
-The router, graders, SQL agent and verifier use `POLYRAG_LLM_FAST_MODEL` with low reasoning
-effort; the synthesizer uses `POLYRAG_LLM_MODEL`. Set the fast model to `claude-haiku-5-5` to cut
+The router, graders, SQL agent and verifier use `MEETRAG_LLM_FAST_MODEL` with low reasoning
+effort; the synthesizer uses `MEETRAG_LLM_MODEL`. Set the fast model to `claude-haiku-5-5` to cut
 the cost of an answer. Claude refusals are handled with the server-side `fallbacks` feature and,
 if still declined, turned into an abstention rather than an error.
 
@@ -301,7 +301,7 @@ curl -s localhost:8000/v1/ask -H 'Content-Type: application/json' \
   -d '{"question": "Which action items are due in November 2026, and who owns them?"}'
 ```
 
-Set `POLYRAG_API_KEY` to require an `X-API-Key` header on `/v1/*`.
+Set `MEETRAG_API_KEY` to require an `X-API-Key` header on `/v1/*`.
 
 ---
 
@@ -337,7 +337,7 @@ uv run pre-commit install
 - **Evaluation** (`eval.yml`): manual end-to-end evaluation, report in the job summary.
 
 ```
-src/polyrag/
+src/meetrag/
 ├── agents/          router, document & SQL agents, synthesizer/verifier, graph
 ├── api/             FastAPI app, schemas, static demo UI
 ├── demo/            deterministic generator of the analytics database
@@ -347,7 +347,7 @@ src/polyrag/
 ├── ingestion/       loaders, chunkers, transcripts, meeting records, pipeline
 ├── retrieval/       BM25, RRF, hybrid retriever, meeting catalog
 ├── cli.py           Typer CLI
-├── config.py        settings (env vars, prefix POLYRAG_)
+├── config.py        settings (env vars, prefix MEETRAG_)
 ├── container.py     composition root
 └── service.py       application service (ask / stream)
 data/corpus/         meetings, policies, products, support
@@ -373,7 +373,7 @@ docs/adr/            architecture decision records
 
 ## En bref (FR)
 
-PolyRAG est un **assistant RAG multi-agents** pensé pour les équipes qui passent leurs journées
+MeetRAG est un **assistant RAG multi-agents** pensé pour les équipes qui passent leurs journées
 en réunion : il interroge des **transcripts de réunions** (texte, VTT, SRT, en français ou en
 anglais), des **documents** et une **base SQL**, et cite chaque information avec la personne, la
 réunion et l'horodatage. Un agent routeur (LangGraph) choisit les sources et comprend « le

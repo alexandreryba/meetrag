@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeetRAG</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%232f5bea%22/%3E%3Ccircle cx=%2210%22 cy=%2216%22 r=%223.5%22 fill=%22white%22/%3E%3Ccircle cx=%2222%22 cy=%229%22 r=%223.5%22 fill=%22white%22/%3E%3Ccircle cx=%2222%22 cy=%2223%22 r=%223.5%22 fill=%22white%22/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f6f7f9; --panel: #ffffff; --text: #16181d; --muted: #5d6573; --border: #e1e4ea;
+      --accent: #2f5bea; --accent-soft: #e8eeff; --ok: #1f8a4c; --warn: #b26a00;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1115; --panel: #171a21; --text: #e7e9ee; --muted: #9aa3b2; --border: #2a2f3a;
+        --accent: #7c9cff; --accent-soft: #1d2540; --ok: #4cc38a; --warn: #f0a742;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+           background: var(--bg); color: var(--text); }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+    header h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+    header p { margin: 4px 0 20px; color: var(--muted); }
+    form { display: flex; gap: 8px; }
+    input { flex: 1; min-width: 0; padding: 12px 14px; font: inherit; color: var(--text);
+            background: var(--panel); border: 1px solid var(--border); border-radius: 10px; }
+    input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+    button { padding: 12px 18px; font: inherit; font-weight: 600; color: #fff; border: 0;
+             border-radius: 10px; background: var(--accent); cursor: pointer; }
+    button:disabled { opacity: .5; cursor: progress; }
+    .examples { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 20px; }
+    .chip { padding: 5px 10px; font-size: 13px; color: var(--accent); background: var(--accent-soft);
+            border: 0; border-radius: 999px; font-weight: 500; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+    section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    #answer { white-space: pre-wrap; min-height: 80px; }
+    #answer .cite { color: var(--accent); font-weight: 600; }
+    #meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+    .badge { padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border); }
+    .badge.ok { color: var(--ok); border-color: currentColor; }
+    .badge.warn { color: var(--warn); border-color: currentColor; }
+    ol.citations { margin: 14px 0 0; padding-left: 0; list-style: none; display: grid; gap: 8px; }
+    ol.citations li { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+    ol.citations b { color: var(--accent); }
+    ol.citations pre { margin: 6px 0 0; font: 12px/1.45 var(--mono); white-space: pre-wrap; color: var(--muted); }
+    ul.trace { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; font-size: 13px; }
+    ul.trace li { padding-left: 12px; border-left: 2px solid var(--accent); }
+    ul.trace .agent { font: 600 12px var(--mono); color: var(--accent); }
+    .empty { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>MeetRAG</h1>
+    <p>Multi-agent assistant over the engagement's meeting transcripts, Voltaria Energy's documents and its analytics database.</p>
+  </header>
+
+  <form id="ask">
+    <input id="question" autocomplete="off" placeholder="Ask a question..." aria-label="Question">
+    <button id="submit" type="submit">Ask</button>
+  </form>
+  <div class="examples" id="examples"></div>
+
+  <div class="grid">
+    <section>
+      <h2>Answer</h2>
+      <div id="answer" class="empty">Answers appear here, with citations to the evidence.</div>
+      <div id="meta"></div>
+      <ol class="citations" id="citations"></ol>
+    </section>
+    <section>
+      <h2>Agent trace</h2>
+      <ul class="trace" id="trace"><li class="empty" style="border:0;padding:0">Routing and retrieval steps appear here.</li></ul>
+    </section>
+  </div>
+</main>
+
+<script>
+  const EXAMPLES = [
+    "What was decided at the last steering committee?",
+    "How did the phase 1 budget evolve since the kick-off?",
+    "Which action items are due in November 2026, and who owns them?",
+    "Quand le go-live a-t-il eu lieu, et pourquoi a-t-il été décalé ?",
+    "Which offer has the highest churn rate, and what can a retention agent propose?",
+  ];
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  let raw = "";
+
+  for (const q of EXAMPLES) {
+    const chip = document.createElement("button");
+    chip.type = "button"; chip.className = "chip"; chip.textContent = q;
+    chip.onclick = () => { $("question").value = q; $("ask").requestSubmit(); };
+    $("examples").append(chip);
+  }
+
+  function renderAnswer() {
+    $("answer").classList.remove("empty");
+    $("answer").innerHTML = esc(raw).replace(/\[(\d+)\]/g, '<span class="cite">[$1]</span>');
+  }
+
+  function addTrace(event) {
+    if ($("trace").querySelector(".empty")) $("trace").innerHTML = "";
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="agent">${esc(event.agent)}</div>${esc(event.message)}`;
+    $("trace").append(li);
+  }
+
+  function renderFinal(result) {
+    raw = result.answer; renderAnswer();
+    const badges = [
+      result.abstained ? '<span class="badge warn">abstained</span>'
+        : result.grounded ? '<span class="badge ok">verified</span>' : '<span class="badge warn">not verified</span>',
+      `<span class="badge">${(result.latency_ms / 1000).toFixed(1)} s</span>`,
+      `<span class="badge">${result.usage.llm_calls} LLM calls</span>`,
+      `<span class="badge">$${result.usage.cost_usd.toFixed(4)}</span>`,
+      ...result.sources_used.map((s) => `<span class="badge">${esc(s)}</span>`),
+    ];
+    $("meta").innerHTML = badges.join("");
+    $("citations").innerHTML = result.citations.map((c) =>
+      `<li><b>[${c.index}]</b> ${esc(c.source)} · ${esc(c.title)}<pre>${esc(c.snippet)}</pre></li>`).join("");
+  }
+
+  $("ask").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const question = $("question").value.trim();
+    if (question.length < 3) return;
+    raw = ""; $("answer").textContent = ""; $("meta").innerHTML = ""; $("citations").innerHTML = "";
+    $("trace").innerHTML = ""; $("submit").disabled = true;
+    try {
+      const response = await fetch("/v1/ask/stream", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail || `HTTP ${response.status}`);
+      }
+      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+      let buffer = "";
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += value;
+        let boundary;
+        while ((boundary = buffer.indexOf("\n\n")) >= 0) {
+          const block = buffer.slice(0, boundary); buffer = buffer.slice(boundary + 2);
+          const data = block.split("\n").find((l) => l.startsWith("data: "));
+          if (!data) continue;
+          const event = JSON.parse(data.slice(6));
+          if (event.type === "token") { raw += event.text; renderAnswer(); }
+          else if (event.type === "reset") { raw = ""; renderAnswer(); }
+          else if (event.type === "trace") addTrace(event.event);
+          else if (event.type === "final") renderFinal(event.result);
+          else if (event.type === "error") throw new Error(event.detail);
+        }
+      }
+    } catch (err) {
+      $("answer").textContent = `Error: ${err.message}`;
+    } finally {
+      $("submit").disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
