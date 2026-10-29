@@ -1,5 +1,5 @@
 [project]
-name = "polyrag"
+name = "meetrag"
 version = "0.1.0"
 description = "Multi-agent, multi-source RAG assistant: LangGraph orchestration, hybrid retrieval, text-to-SQL and built-in evaluation."
 readme = "README.md"
@@ -44,10 +44,10 @@ langchain = ["langchain>=1.0"]
 subscription = ["claude-agent-sdk>=0.2"]
 
 [project.scripts]
-polyrag = "polyrag.cli:app"
+meetrag = "meetrag.cli:app"
 
 [project.urls]
-Repository = "https://github.com/alexandreryba/polyrag"
+Repository = "https://github.com/alexandreryba/meetrag"
 
 [dependency-groups]
 dev = [
@@ -65,7 +65,7 @@ requires = ["hatchling>=1.32.4"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/polyrag"]
+packages = ["src/meetrag"]
 
 [tool.ruff]
 line-length = 100
@@ -115,7 +115,7 @@ addopts = "-ra --strict-markers"
 markers = ["slow: tests that download models or need network"]
 
 [tool.coverage.run]
-source = ["polyrag"]
+source = ["meetrag"]
 branch = true
 
 [tool.coverage.report]

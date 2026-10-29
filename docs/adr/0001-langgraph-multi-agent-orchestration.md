@@ -23,7 +23,7 @@ Model the assistant as a LangGraph `StateGraph`:
    when it finds unsupported claims.
 
 Agents receive their dependencies through constructors, and the graph is assembled in
-`polyrag.agents.graph.build_graph`, so each agent can be unit-tested in isolation.
+`meetrag.agents.graph.build_graph`, so each agent can be unit-tested in isolation.
 
 ## Consequences
 

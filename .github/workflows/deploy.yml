@@ -14,7 +14,7 @@ permissions:
 env:
   REGION: ${{ vars.GCP_REGION }}
   SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
-  IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/polyrag/api:${{ github.sha }}
+  IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/meetrag/api:${{ github.sha }}
 
 jobs:
   deploy:

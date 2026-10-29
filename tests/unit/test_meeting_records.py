@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from polyrag.evaluation.extraction import GoldMeeting, evaluate_extraction
-from polyrag.infrastructure.sql import SQLiteDatabase
-from polyrag.ingestion.meeting_records import (
+from meetrag.evaluation.extraction import GoldMeeting, evaluate_extraction
+from meetrag.infrastructure.sql import SQLiteDatabase
+from meetrag.ingestion.meeting_records import (
     ActionItem,
     Decision,
     MeetingExtractor,
@@ -13,7 +13,7 @@ from polyrag.ingestion.meeting_records import (
     load_cached_insights,
     write_meeting_records,
 )
-from polyrag.ingestion.transcripts import Participant, Transcript, Turn
+from meetrag.ingestion.transcripts import Participant, Transcript, Turn
 from tests.conftest import ScriptedLLM
 
 INSIGHTS = MeetingInsights(

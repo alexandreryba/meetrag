@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from polyrag.config import load_environment
+from meetrag.config import load_environment
 
 
 def test_env_file_exports_provider_credentials(

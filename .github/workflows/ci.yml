@@ -53,10 +53,10 @@ jobs:
       - uses: actions/cache@v6
         with:
           path: .cache/fastembed
-          key: fastembed-${{ hashFiles('src/polyrag/config.py', 'src/polyrag/cli.py') }}
+          key: fastembed-${{ hashFiles('src/meetrag/config.py', 'src/meetrag/cli.py') }}
       - run: uv sync --frozen
-      - run: uv run polyrag ingest
-      - run: uv run polyrag eval retrieval --min-mrr 0.90
+      - run: uv run meetrag ingest
+      - run: uv run meetrag eval retrieval --min-mrr 0.90
       - run: cat reports/retrieval.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
@@ -74,6 +74,6 @@ jobs:
         with:
           context: .
           push: false
-          tags: polyrag:ci
+          tags: meetrag:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max

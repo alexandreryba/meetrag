@@ -1,7 +1,7 @@
 .git
 .github
 .venv
-.polyrag
+.meetrag
 .cache
 .env
 .env.*

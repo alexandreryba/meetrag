@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from polyrag.domain.models import Source
-from polyrag.ingestion.transcripts import (
+from meetrag.domain.models import Source
+from meetrag.ingestion.transcripts import (
     TranscriptChunker,
     Turn,
     clean_turns,

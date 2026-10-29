@@ -5,7 +5,7 @@ output "service_url" {
 
 output "image_repository" {
   description = "Artifact Registry path for images."
-  value       = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.polyrag.repository_id}"
+  value       = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.meetrag.repository_id}"
 }
 
 # Values to set as GitHub Actions repository variables for deploy.yml.

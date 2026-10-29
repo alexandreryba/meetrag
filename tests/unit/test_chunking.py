@@ -1,5 +1,5 @@
-from polyrag.domain.models import Document, Source
-from polyrag.ingestion.chunking import MarkdownChunker
+from meetrag.domain.models import Document, Source
+from meetrag.ingestion.chunking import MarkdownChunker
 
 DOC = """# Remote Work Policy
 
