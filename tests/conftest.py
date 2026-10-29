@@ -20,6 +20,8 @@ from meetrag.domain.ports import Effort
 from meetrag.infrastructure.embeddings import HashingEmbedder
 from meetrag.infrastructure.vectorstores import InMemoryVectorStore
 
+Indexed = tuple[HashingEmbedder, InMemoryVectorStore]
+
 ROOT = Path(__file__).resolve().parents[1]
 
 ROUTING_RULES: list[tuple[str, Source]] = [
@@ -100,7 +102,7 @@ def index_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
 @pytest.fixture(scope="session")
 def settings(index_dir: Path) -> Settings:
     return Settings(
-        _env_file=None,  # type: ignore[call-arg]
+        _env_file=None,
         corpus_dir=ROOT / "data" / "corpus",
         golden_set=ROOT / "eval" / "golden_set.jsonl",
         index_dir=index_dir,
@@ -112,7 +114,7 @@ def settings(index_dir: Path) -> Settings:
 
 
 @pytest.fixture(scope="session")
-def indexed(settings: Settings) -> tuple[HashingEmbedder, InMemoryVectorStore]:
+def indexed(settings: Settings) -> Indexed:
     """Ingest the real corpus once per session with offline components."""
     embedder, store = HashingEmbedder(), InMemoryVectorStore()
     Container(settings, embedder=embedder, store=store).ingest()
@@ -125,9 +127,7 @@ def llm() -> ScriptedLLM:
 
 
 @pytest.fixture
-def container(
-    settings: Settings, indexed: tuple[HashingEmbedder, InMemoryVectorStore], llm: ScriptedLLM
-) -> Container:
+def container(settings: Settings, indexed: Indexed, llm: ScriptedLLM) -> Container:
     embedder, store = indexed
     return Container(
         settings,

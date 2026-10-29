@@ -8,10 +8,10 @@
 ![Lint](https://img.shields.io/badge/lint-ruff-261230)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-> **Measured on a 67-question golden set:** 96.7% answer accuracy, 97.8% faithfulness to
-> the retrieved evidence, 100% routing recall and 100% abstention on out-of-scope
-> questions; meeting records extracted with 100% precision and recall on 25 annotated action
-> items ([details](#evaluation)).
+> **Measured on a 67-question golden set:** 93.3% accuracy (56 of the 60 answerable questions
+> fully correct, the other 4 partially), 97.8% faithfulness to the retrieved evidence, 100%
+> routing recall and 100% abstention on the 7 out-of-scope questions; meeting records extracted
+> with 100% precision and recall on 25 annotated action items ([details](#evaluation)).
 
 On a consulting engagement, most of the knowledge is spoken. The budget approved by the CFO,
 the data source dropped during a workshop, the deadline promised in a weekly sync: all of it
@@ -47,7 +47,7 @@ speaker, meeting and timestamp of every quote:
   **CI quality gate**, an extraction benchmark against hand-annotated meeting records, and an
   end-to-end LLM-as-judge evaluation (accuracy, faithfulness, routing, abstention, latency, cost)
   that can resume after an interruption.
-- **Production-ready service**: FastAPI with Server-Sent Events streaming, a demo UI, Docker
+- **Deployable service**: FastAPI with Server-Sent Events streaming, a demo UI, Docker
   image with the index baked in, Terraform for **Cloud Run** (Secret Manager, Workload Identity
   Federation), GitHub Actions CI/CD.
 
@@ -145,8 +145,8 @@ executed at evaluation time**, so reference figures are exact. Results (Claude O
 
 | Metric | Result | How it is measured |
 |---|---|---|
-| Answer accuracy | **96.7%** | Judge grades each answer against the reference: correct = 1, partial = 0.5 |
-| Strict accuracy | **93.3%** | Fully correct answers: 56 of the 60 answerable questions, the other 4 are partial, none is wrong |
+| Accuracy | **93.3%** | Fully correct answers: 56 of the 60 answerable questions, the other 4 are partial, none is wrong |
+| Accuracy with partial credit | **96.7%** | Judge grades each answer against the reference: correct = 1, partial = 0.5 |
 | Faithfulness | **97.8%** | Share of the answer's atomic claims supported by the retrieved evidence |
 | Routing recall / precision | **100% / 90.8%** | Sources chosen by the router vs. expected sources (extra sources lower precision) |
 | Abstention on out-of-scope questions | **100%** (7 / 7) | Explicit "not found" instead of an invented answer |
@@ -156,7 +156,7 @@ executed at evaluation time**, so reference figures are exact. Results (Claude O
 | Latency p50 / p95 | 21 s / 36 s | See the note below |
 | Errors | 0 | |
 
-| Category | Questions | Accuracy | Faithfulness |
+| Category | Questions | Accuracy (partial = 0.5) | Faithfulness |
 |---|---|---|---|
 | **Meetings** (single meeting, across meetings, who said what, French question) | 12 | **100%** | 100% |
 | **Meeting records** (action items, steering committees, attendance, via SQL) | 4 | **100%** | 96.4% |
@@ -380,10 +380,11 @@ réunion et l'horodatage. Un agent routeur (LangGraph) choisit les sources et co
 dernier comité de pilotage » ou « ce qu'a dit Sophie en mars » ; des agents spécialisés
 cherchent en parallèle (recherche hybride BM25 + vecteurs, Qdrant ; text-to-SQL sécurisé) ; un
 agent de synthèse rédige la réponse, vérifiée par un agent de contrôle des hallucinations. Les
-décisions et actions de chaque réunion sont extraites en base SQL. Sur 67 questions : 97 %
-de réponses correctes, 98 % de fidélité aux sources, 100 % de questions hors
-périmètre refusées ; extraction des actions : 100 % de précision et de rappel. Le projet
-inclut CI avec quality gate, API FastAPI en streaming, Docker et Terraform pour Cloud Run.
+décisions et actions de chaque réunion sont extraites en base SQL. Sur les 60 questions qui ont
+une réponse : 93 % de réponses entièrement correctes (les 4 autres partielles), 98 % de
+fidélité aux sources ; les 7 questions hors périmètre sont toutes refusées ; extraction des
+actions : 100 % de précision et de rappel. Le projet inclut CI avec quality gate, API FastAPI
+en streaming, Docker et Terraform pour Cloud Run.
 
 ## License
 

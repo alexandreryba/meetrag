@@ -17,7 +17,7 @@ format: ## Auto-format and fix lint issues
 	uv run ruff check --fix .
 
 typecheck: ## Static type checking (mypy --strict)
-	uv run mypy src
+	uv run mypy src tests
 
 test: ## Run the test suite with coverage
 	uv run pytest --cov --cov-report=term-missing
