@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ---- Build: dependencies, project, and the pre-built index -----------------------------------
-FROM python:3.12-slim AS builder
+FROM python:3.15-slim AS builder
 COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /bin/uv
 
 ENV UV_COMPILE_BYTECODE=1 \
@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 RUN /app/.venv/bin/meetrag ingest
 
 # ---- Runtime: slim, non-root ----------------------------------------------------------------
-FROM python:3.12-slim AS runtime
+FROM python:3.15-slim AS runtime
 
 RUN useradd --create-home --uid 10001 app
 WORKDIR /app
