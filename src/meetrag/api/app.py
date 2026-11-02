@@ -12,7 +12,6 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated
 
-import anthropic
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
@@ -22,7 +21,7 @@ from meetrag.api.schemas import AskRequest, Readiness, SourceInfo
 from meetrag.config import get_settings
 from meetrag.container import Container
 from meetrag.domain.models import AnswerResult, Source
-from meetrag.domain.ports import LLMConfigurationError, LLMUnavailableError
+from meetrag.domain.ports import LLMConfigurationError, LLMProviderError, LLMUnavailableError
 from meetrag.observability import configure_logging
 
 if TYPE_CHECKING:
@@ -90,8 +89,8 @@ def create_app(container: Container | None = None) -> FastAPI:
         )
         return response
 
-    @app.exception_handler(anthropic.APIError)
-    async def upstream_error(_: Request, exc: anthropic.APIError) -> JSONResponse:
+    @app.exception_handler(LLMProviderError)
+    async def upstream_error(_: Request, exc: LLMProviderError) -> JSONResponse:
         logger.error("model provider error: %s", exc)
         return JSONResponse(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -151,7 +150,7 @@ def create_app(container: Container | None = None) -> FastAPI:
             try:
                 async for event in container.assistant.stream(payload.question):
                     yield f"event: {event['type']}\ndata: {json.dumps(event, default=str)}\n\n"
-            except (anthropic.APIError, LLMUnavailableError) as exc:
+            except (LLMProviderError, LLMUnavailableError) as exc:
                 logger.error("model provider error during stream: %s", exc)
                 detail = (
                     _unavailable_detail(exc)
