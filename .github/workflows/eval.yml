@@ -32,7 +32,7 @@ jobs:
       - run: uv run meetrag ingest
       - run: uv run meetrag eval e2e ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }}
       - run: cat reports/e2e.md >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: e2e-report
           path: reports/e2e.*
