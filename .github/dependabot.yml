@@ -15,3 +15,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    ignore:
+      # The image's Python follows the versions CI tests (3.11 to 3.13) and the wheels the
+      # dependencies publish (onnxruntime had none for 3.15): it is moved by hand.
+      - dependency-name: python
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]

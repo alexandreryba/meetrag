@@ -102,3 +102,19 @@ async def test_missing_credentials_raise_a_configuration_error() -> None:
     llm = AnthropicLLM("claude-opus-5-5", client=AsyncAnthropic(api_key=None, auth_token=None))
     with pytest.raises(LLMConfigurationError, match="ANTHROPIC_API_KEY"):
         await llm.complete(system="s", prompt="p")
+
+
+async def test_sdk_errors_become_provider_errors() -> None:
+    import httpx
+    from anthropic import APIConnectionError
+
+    from meetrag.domain.ports import LLMProviderError
+
+    class Unreachable(StubMessages):
+        async def create(self, **kwargs: Any) -> Any:
+            raise APIConnectionError(request=httpx.Request("POST", "https://api.anthropic.com"))
+
+    llm, _ = _llm(_message())
+    llm._messages = Unreachable(_message())  # type: ignore[assignment]
+    with pytest.raises(LLMProviderError):
+        await llm.complete(system="s", prompt="p")
