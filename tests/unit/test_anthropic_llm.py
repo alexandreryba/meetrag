@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from pydantic import BaseModel
@@ -105,14 +105,14 @@ async def test_missing_credentials_raise_a_configuration_error() -> None:
 
 
 async def test_sdk_errors_become_provider_errors() -> None:
-    import httpx
     from anthropic import APIConnectionError
 
     from meetrag.domain.ports import LLMProviderError
 
     class Unreachable(StubMessages):
         async def create(self, **kwargs: Any) -> Any:
-            raise APIConnectionError(request=httpx.Request("POST", "https://api.anthropic.com"))
+            # The error only stores the request; its HTTP client type is an SDK detail.
+            raise APIConnectionError(request=cast("Any", None))
 
     llm, _ = _llm(_message())
     llm._messages = Unreachable(_message())  # type: ignore[assignment]
