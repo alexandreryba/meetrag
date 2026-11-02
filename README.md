@@ -22,13 +22,14 @@ them?"*: finding the answer means re-reading recordings.
 
 MeetRAG is the assistant I wanted as a data & AI consultant. It routes each question to
 specialist agents, runs them in parallel over **meeting transcripts**, **documents** and a
-**SQL database**, and only returns answers whose claims are backed by the evidence, with the
+**SQL database**, and checks every claim of the answer against that evidence, citing the
 speaker, meeting and timestamp of every quote:
 
 - **Multi-agent orchestration with LangGraph**: a router plans the sources, decomposes the
   question and sets meeting filters; document agents and a text-to-SQL agent run concurrently
   (`Send` fan-out); a synthesizer writes a cited answer; a verifier checks every claim and
-  triggers a rewrite.
+  asks for one rewrite. An answer still unsupported after that is returned with
+  `grounded: false` and shown as *not verified* in the UI, never silently passed off as checked.
 - **Meeting transcripts as a first-class source**: plain text, WebVTT (Teams, Zoom, Meet) and
   SRT; fillers and stutters removed; emails and phone numbers masked; chunks follow speaker
   turns; French and English.
@@ -44,12 +45,13 @@ speaker, meeting and timestamp of every quote:
   read-only connection with an authorizer, timeouts, and self-correction from SQL errors.
 - **Abstention**: out-of-scope questions get an explicit "not found" instead of a hallucination.
 - **Evaluation built in**: a 67-question golden set, an offline retrieval benchmark used as a
-  **CI quality gate**, an extraction benchmark against hand-annotated meeting records, and an
+  **CI quality gate**, an extraction benchmark against annotated meeting records, and an
   end-to-end LLM-as-judge evaluation (accuracy, faithfulness, routing, abstention, latency, cost)
   that can resume after an interruption.
-- **Deployable service**: FastAPI with Server-Sent Events streaming, a demo UI, Docker
-  image with the index baked in, Terraform for **Cloud Run** (Secret Manager, Workload Identity
-  Federation), GitHub Actions CI/CD.
+- **Service, ready to deploy**: FastAPI with Server-Sent Events streaming, a demo UI, Docker
+  image with the index baked in (built in CI), Terraform for **Cloud Run** (Secret Manager,
+  Workload Identity Federation) and a deploy workflow. Not deployed yet: there is no public demo
+  ([status](#deployment-on-google-cloud)).
 
 > **The data is fictional, on purpose.** The demo is a consulting engagement at Voltaria Energy,
 > an invented French electricity retailer: 10 meeting transcripts (5 in French, 5 in English),
@@ -153,7 +155,7 @@ executed at evaluation time**, so reference figures are exact. Results (Claude O
 | False abstention | **0%** | Answerable questions wrongly declined |
 | LLM calls per question | 4.3 | Router, graders, SQL agent, synthesizer, verifier |
 | API-equivalent cost per question | $0.082 | Token usage × list price (judge excluded) |
-| Latency p50 / p95 | 21 s / 36 s | See the note below |
+| Latency p50 / p95 | 21 s / 36 s | Through the Claude Code CLI, which starts a process per call: slower than the API (note below) |
 | Errors | 0 | |
 
 | Category | Questions | Accuracy (partial = 0.5) | Faithfulness |
@@ -193,17 +195,20 @@ and abstention, which is what the golden set targets. Full report: [reports/e2e.
 
 ### Meeting-record extraction (offline)
 
-`meetrag eval extraction` compares the cached LLM extractions with hand-annotated records of
-the 10 meetings ([eval/meeting_records_gold.jsonl](eval/meeting_records_gold.jsonl)). An action
-item matches when the owner is the same person and the tasks are paraphrases (embedding cosine
-similarity of at least 0.70; true matches score 0.78 or more, median 0.92, while the closest
-wrong pair scores 0.73).
+`meetrag eval extraction` compares the cached LLM extractions with annotated reference records
+of the 10 meetings ([eval/meeting_records_gold.jsonl](eval/meeting_records_gold.jsonl)). An
+action item matches when the owner is the same person and the tasks are paraphrases: pairs are
+matched one to one, highest embedding cosine similarity first, down to a floor of 0.70. The floor
+alone does not separate right from wrong (the closest wrong pair scores 0.73, true matches 0.78
+or more, median 0.92); the same-owner rule and the one-to-one matching do. A floor of 0.75 would
+keep every true match.
 
 | Metric | Result |
 |---|---|
 | Action items: precision / recall | **100% / 100%** (25 / 25) |
 | Due dates correct on matched items | 96% (24 / 25) |
-| Decisions found | 100% (16 / 16 annotated; 21 extracted) |
+| Decisions: recall | 100% (16 / 16 annotated decisions found) |
+| Decisions: precision | Not measured: 21 decisions were extracted, and the 5 beyond the annotations are not scored (what counts as a decision is fuzzier than an action item) |
 
 The one date mismatch is debatable: for "staff six agents for the go-live week", the model
 resolved the date to the go-live day decided in the same meeting, where the annotation leaves
@@ -303,6 +308,14 @@ curl -s localhost:8000/v1/ask -H 'Content-Type: application/json' \
 
 Set `MEETRAG_API_KEY` to require an `X-API-Key` header on `/v1/*`.
 
+**Before exposing it.** There is no rate limit, and a question costs about $0.08 of model usage:
+keep the API key on (the Terraform injects it from Secret Manager) and cap the instances
+(`max_instances`). Browsers from other sites are refused unless listed in
+`MEETRAG_CORS_ORIGINS` (empty by default; the demo UI is same-origin). Retrieved passages go
+into the prompts as evidence, so the corpus is trusted input: a document written to contain
+instructions could steer an answer, and the verifier checks that claims match the evidence,
+not that the evidence is honest. Only index transcripts and documents you control.
+
 ---
 
 ## Deployment on Google Cloud
@@ -315,13 +328,16 @@ nothing and calls no model.
 
 Step-by-step guide: [docs/deployment.md](docs/deployment.md).
 
+**Status:** the Terraform and the deploy workflow are written but have not been applied to a
+live project yet, so there is no public URL; CI builds the Docker image on every push.
+
 ---
 
 ## Development
 
 ```bash
 make check            # ruff + mypy --strict + pytest (what CI runs)
-make test             # 92 tests, ~10 s, fully offline
+make test             # 95 tests, ~10 s, fully offline
 uv run pre-commit install
 ```
 
@@ -368,6 +384,16 @@ docs/adr/            architecture decision records
   retrieved chunks, from the error analysis.
 - Conversation memory (LangGraph checkpointer) for follow-up questions.
 - BigQuery adapter for the `SqlDatabase` port; OpenTelemetry tracing of agent steps.
+
+---
+
+## How it was built
+
+MeetRAG was developed with [Claude Code](https://claude.com/claude-code), Anthropic's coding
+agent, as a pair programmer: much of the code, the synthetic corpus and the tests were written
+through it. The author chose the problem and the architecture, made the trade-offs recorded in
+the [ADRs](docs/adr/), reviewed the changes and ran the evaluations; the numbers above are
+reported as measured, including the ones that did not improve.
 
 ---
 

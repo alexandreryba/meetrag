@@ -6,9 +6,15 @@ import logging
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, cast
 
-from anthropic import AsyncAnthropic, AsyncAnthropicVertex
+from anthropic import APIError, AsyncAnthropic, AsyncAnthropicVertex
 
-from meetrag.domain.ports import Effort, LLMConfigurationError, LLMError, SchemaT
+from meetrag.domain.ports import (
+    Effort,
+    LLMConfigurationError,
+    LLMError,
+    LLMProviderError,
+    SchemaT,
+)
 from meetrag.observability import record_usage
 
 if TYPE_CHECKING:
@@ -24,8 +30,9 @@ _FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 
 @contextmanager
-def _credentials_required() -> Iterator[None]:
-    """The SDK resolves credentials lazily and raises a bare TypeError when none exist."""
+def _provider_errors() -> Iterator[None]:
+    """Translate SDK failures into domain errors. The SDK resolves credentials lazily and raises
+    a bare TypeError when none exist; API and network errors become ``LLMProviderError``."""
     try:
         yield
     except TypeError as exc:
@@ -34,6 +41,8 @@ def _credentials_required() -> Iterator[None]:
         raise LLMConfigurationError(
             "no Claude credentials found: set ANTHROPIC_API_KEY (see .env.example)"
         ) from exc
+    except APIError as exc:
+        raise LLMProviderError(str(exc)) from exc
 
 
 class AnthropicLLM:
@@ -87,7 +96,7 @@ class AnthropicLLM:
     async def complete(
         self, *, system: str, prompt: str, effort: Effort = "medium", max_tokens: int = 16000
     ) -> str:
-        with _credentials_required():
+        with _provider_errors():
             message = await self._messages.create(
                 **self._request(system, prompt, effort, max_tokens)
             )
@@ -103,7 +112,7 @@ class AnthropicLLM:
         effort: Effort = "low",
         max_tokens: int = 16000,
     ) -> SchemaT:
-        with _credentials_required():
+        with _provider_errors():
             message = await self._messages.parse(
                 **self._request(system, prompt, effort, max_tokens), output_format=schema
             )
@@ -116,7 +125,7 @@ class AnthropicLLM:
     async def stream(
         self, *, system: str, prompt: str, effort: Effort = "medium", max_tokens: int = 16000
     ) -> AsyncIterator[str]:
-        with _credentials_required():
+        with _provider_errors():
             async with self._messages.stream(
                 **self._request(system, prompt, effort, max_tokens)
             ) as stream:

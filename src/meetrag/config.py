@@ -76,7 +76,9 @@ class Settings(BaseSettings):
     # --- API --------------------------------------------------------------------------------
     api_key: SecretStr | None = None  # if set, required in the X-API-Key header
     auto_ingest: bool = True  # build the index at startup when it is missing
-    cors_origins: list[str] = Field(default_factory=lambda: ["*"])
+    # Other sites allowed to call the API from a browser. Empty: same origin only (the demo UI
+    # is served by the API itself). Example: MEETRAG_CORS_ORIGINS='["https://app.example.com"]'.
+    cors_origins: list[str] = Field(default_factory=list)
     log_level: str = "INFO"
     log_json: bool = False
 

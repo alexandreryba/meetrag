@@ -77,3 +77,23 @@ def test_missing_llm_credentials_return_503(container: Container) -> None:
         response = client.post("/v1/ask", json={"question": "What is the hotel cap?"})
         assert response.status_code == 503
         assert "not configured" in response.json()["detail"]
+
+
+def test_provider_errors_return_502(container: Container) -> None:
+    from meetrag.domain.ports import LLMProviderError
+
+    class Failing:
+        async def ask(self, question: str) -> None:
+            raise LLMProviderError("overloaded")
+
+    container.__dict__["assistant"] = Failing()
+    with _client(container) as client:
+        response = client.post("/v1/ask", json={"question": "What is the hotel cap?"})
+        assert response.status_code == 502
+        assert "provider returned an error" in response.json()["detail"]
+
+
+def test_cross_origin_browsers_are_refused_by_default(container: Container) -> None:
+    with _client(container) as client:
+        response = client.get("/healthz", headers={"Origin": "https://elsewhere.example"})
+        assert "access-control-allow-origin" not in response.headers
