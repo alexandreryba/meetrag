@@ -33,6 +33,12 @@ class LLMConfigurationError(LLMUnavailableError):
     """The provider is not configured (e.g. no credentials found)."""
 
 
+class LLMProviderError(RuntimeError):
+    """Raised when the model provider fails one request (HTTP error, network failure) after the
+    client's own retries. Adapters translate their SDK's errors into it, so the interfaces never
+    depend on a provider SDK."""
+
+
 class QueryError(ValueError):
     """Raised when a SQL query is rejected by the guardrails or fails to execute.
 
