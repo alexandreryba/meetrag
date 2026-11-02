@@ -389,11 +389,10 @@ docs/adr/            architecture decision records
 
 ## How it was built
 
-MeetRAG was developed with [Claude Code](https://claude.com/claude-code), Anthropic's coding
-agent, as a pair programmer: much of the code, the synthetic corpus and the tests were written
-through it. The author chose the problem and the architecture, made the trade-offs recorded in
-the [ADRs](docs/adr/), reviewed the changes and ran the evaluations; the numbers above are
-reported as measured, including the ones that did not improve.
+MeetRAG was built with Claude Code, an AI coding assistant, used as a pair programmer, including
+for the synthetic corpus. The author chose the problem and the architecture, made the trade-offs
+recorded in the [ADRs](docs/adr/), reviewed the changes and ran the evaluations; the numbers above
+are reported as measured, including the ones that did not improve.
 
 ---
 
